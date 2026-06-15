@@ -410,13 +410,13 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="showTab('latest')">Latest Event</button>
-  <button class="tab" onclick="showTab('monthly')">Monthly View</button>
-  <button class="tab" onclick="showTab('sgn-trend')">SGN Trend</button>
-  <button class="tab" onclick="showTab('speaker-trend')">Speaker Trend</button>
-  <button class="tab" onclick="showTab('snackable-trend')">Snackable Trend</button>
-  <button class="tab" onclick="showTab('benchmarks')">Type Benchmarks</button>
-  <button class="tab" onclick="showTab('all-events')">All Events</button>
+  <button class="tab active" onclick="showTab('latest', this)">Latest Event</button>
+  <button class="tab" onclick="showTab('monthly', this)">Monthly View</button>
+  <button class="tab" onclick="showTab('sgn-trend', this)">SGN Trend</button>
+  <button class="tab" onclick="showTab('speaker-trend', this)">Speaker Trend</button>
+  <button class="tab" onclick="showTab('snackable-trend', this)">Snackable Trend</button>
+  <button class="tab" onclick="showTab('benchmarks', this)">Type Benchmarks</button>
+  <button class="tab" onclick="showTab('all-events', this)">All Events</button>
 </div>
 
 <!-- ===== TAB: LATEST EVENT ===== -->
@@ -698,22 +698,22 @@
   <div class="section-label">Community Retention Metrics</div>
   <div class="pipeline-grid" style="margin-bottom:16px">
     <div class="pipeline-card tier1">
-      <div class="pipeline-num" style="color:var(--accent)">407</div>
+      <div class="pipeline-num" style="color:var(--accent)">501</div>
       <div class="pipeline-label">Total unique people ever registered</div>
-      <div class="pipeline-note">Deduped by email · All 14 events</div>
+      <div class="pipeline-note">Deduped by email · All 13 CSVs</div>
     </div>
     <div class="pipeline-card tier2">
-      <div class="pipeline-num" style="color:var(--blue)">215</div>
+      <div class="pipeline-num" style="color:var(--blue)">267</div>
       <div class="pipeline-label">Unique people who attended at least once</div>
-      <div class="pipeline-note">52.8% of all registered</div>
+      <div class="pipeline-note">53.3% of all registered</div>
     </div>
     <div class="pipeline-card tier3">
-      <div class="pipeline-num" style="color:var(--accent)">38.6%</div>
+      <div class="pipeline-num" style="color:var(--accent)">34.5%</div>
       <div class="pipeline-label">Return rate (registered in 2+ events)</div>
-      <div class="pipeline-note">157 of 407 · Healthy range: 20–40%</div>
+      <div class="pipeline-note">173 of 501 · Healthy range: 20–40%</div>
     </div>
     <div class="pipeline-card tier4">
-      <div class="pipeline-num" style="color:var(--purple)">30</div>
+      <div class="pipeline-num" style="color:var(--purple)">32</div>
       <div class="pipeline-label">Loyalists — attended 3+ events</div>
       <div class="pipeline-note">Core community anchors</div>
     </div>
@@ -722,24 +722,24 @@
   <div class="section-label">Catalyst Membership Pipeline</div>
   <div class="pipeline-grid" style="margin-bottom:16px">
     <div class="pipeline-card tier1">
-      <div class="pipeline-num" style="color:var(--accent)">84</div>
+      <div class="pipeline-num" style="color:var(--accent)">99</div>
       <div class="pipeline-label">Unique people ever expressing Catalyst interest</div>
-      <div class="pipeline-note">Any "yes" across all events</div>
+      <div class="pipeline-note">Any "yes" across all events · fully deduped</div>
     </div>
     <div class="pipeline-card tier2">
-      <div class="pipeline-num" style="color:var(--blue)">14</div>
+      <div class="pipeline-num" style="color:var(--blue)">9</div>
       <div class="pipeline-label">High-intent — said yes at 2+ events</div>
       <div class="pipeline-note">Strongest pipeline signal</div>
     </div>
     <div class="pipeline-card tier3">
-      <div class="pipeline-num" style="color:var(--accent)">48</div>
+      <div class="pipeline-num" style="color:var(--accent)">78</div>
       <div class="pipeline-label">Reliable pipeline (Feb 2026+ "Catalyst" wording)</div>
       <div class="pipeline-note">Comparable baseline from Feb 2026</div>
     </div>
     <div class="pipeline-card tier4">
-      <div class="pipeline-num" style="color:var(--purple)">116</div>
-      <div class="pipeline-label">Cumulative Catalyst yeses (incl. Jun 2026)</div>
-      <div class="pipeline-note">Pre-dedup estimate · Will be refined</div>
+      <div class="pipeline-num" style="color:var(--purple)">99</div>
+      <div class="pipeline-label">Cumulative unique Catalyst yeses (incl. Jun 2026)</div>
+      <div class="pipeline-note">Fully deduped by email · Jun 2026</div>
     </div>
   </div>
 
@@ -963,17 +963,17 @@
 
 <script>
 // ===== TAB SWITCHING =====
-function showTab(id) {
+function showTab(id, btn) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 
-  // Lazy init charts
-  if (id === 'sgn-trend' && !window.sgnInited) { initSGNCharts(); window.sgnInited = true; }
-  if (id === 'speaker-trend' && !window.spInited) { initSPCharts(); window.spInited = true; }
-  if (id === 'snackable-trend' && !window.snInited) { initSNCharts(); window.snInited = true; }
-  if (id === 'monthly' && !window.monthlyInited) { renderMonthly(); window.monthlyInited = true; }
+  // Always render charts when tab is shown (handles resize/first-load)
+  if (id === 'sgn-trend') { initSGNCharts(); window.sgnInited = true; }
+  if (id === 'speaker-trend') { initSPCharts(); window.spInited = true; }
+  if (id === 'snackable-trend') { initSNCharts(); window.snInited = true; }
+  if (id === 'monthly') { renderMonthly(); window.monthlyInited = true; }
 }
 
 // ===== DATA =====
@@ -1242,7 +1242,7 @@ function setSGNRange(r) {
 
 function renderSGNCharts() {
   const slice = getSGNSlice();
-  const labels = slice.map(e => e.date.replace(' 20', ' '').replace('2025','25').replace('2026','26'));
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
   drawLineChart(document.getElementById('sgn-regs-chart'), labels, [{color: COLORS.blue, values: slice.map(e => e.registrations)}], {height:200, min:0});
   drawLineChart(document.getElementById('sgn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
   const satVals = slice.map(e => e.avg_rating);
@@ -1264,7 +1264,7 @@ function setSPRange(r) {
 
 function renderSPCharts() {
   const slice = spRange === 'all' ? spEvents : spEvents.slice(-spRange);
-  const labels = slice.map(e => e.date.replace(' 2025','\'25').replace(' 2026','\'26'));
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
   drawLineChart(document.getElementById('sp-regs-chart'), labels, [{color: COLORS.purple, values: slice.map(e => e.registrations)}], {height:200, min:0});
   drawLineChart(document.getElementById('sp-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
   const satVals = slice.map(e => e.avg_rating);
@@ -1279,7 +1279,7 @@ function setSNRange(r) { renderSNCharts(); }
 
 function renderSNCharts() {
   const slice = snEvents;
-  const labels = slice.map(e => e.date.replace(' 2025','\'25').replace(' 2026','\'26'));
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
   drawLineChart(document.getElementById('sn-regs-chart'), labels, [{color: COLORS.orange, values: slice.map(e => e.registrations)}], {height:200, min:0});
   drawLineChart(document.getElementById('sn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
   drawLineChart(document.getElementById('sn-sat-chart'), labels, [{color: COLORS.warn, values: slice.map(e => e.avg_rating)}], {height:200, min:3.5, max:5.5, formatter: v => v === null ? '—' : v.toFixed(1)});
