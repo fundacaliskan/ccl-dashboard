@@ -3,1301 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CCL Event Analytics — Climate Conscious Leaders</title>
+<title>CCL Event Analytics Dashboard</title>
 <style>
-  :root {
-    --bg: #0f1410;
-    --surface: #161c17;
-    --surface-2: #1d261e;
-    --border: #2a3a2b;
-    --border-light: #3a4e3b;
-    --text: #e8ede8;
-    --text-muted: #8a9e8b;
-    --text-dim: #5a6e5b;
-    --accent: #4ade80;
-    --accent-dim: #1a3a24;
-    --accent-mid: #22c55e;
-    --warn: #facc15;
-    --warn-dim: #3a3000;
-    --flag: #f87171;
-    --flag-dim: #3a1010;
-    --blue: #60a5fa;
-    --blue-dim: #1a2a3a;
-    --purple: #a78bfa;
-    --orange: #fb923c;
-    --font-mono: 'SF Mono', 'Fira Code', monospace;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --radius: 6px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    height: 52px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .header-sep { width: 1px; height: 20px; background: var(--border); }
-  .header-subtitle {
-    color: var(--text-muted);
-    font-size: 12px;
-    font-family: var(--font-mono);
-  }
-  .header-updated {
-    margin-left: auto;
-    color: var(--text-dim);
-    font-size: 11px;
-    font-family: var(--font-mono);
-  }
-
-  /* TABS */
-  .tabs {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-  }
-  .tab {
-    padding: 12px 18px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
-    background: none;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* CONTENT */
-  .tab-content { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
-  .tab-content.active { display: block; }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .card-title {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* KPI GRID */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .kpi {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-  }
-  .kpi-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
-  }
-  .kpi-value {
-    font-family: var(--font-mono);
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .kpi-sub { font-size: 11px; color: var(--text-muted); }
-  .kpi.green .kpi-value { color: var(--accent); }
-  .kpi.yellow .kpi-value { color: var(--warn); }
-  .kpi.red .kpi-value { color: var(--flag); }
-  .kpi.blue .kpi-value { color: var(--blue); }
-  .kpi.purple .kpi-value { color: var(--purple); }
-
-  /* TWO-COL */
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
-  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  @media (max-width: 900px) { .three-col { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .three-col { grid-template-columns: 1fr; } }
-
-  /* FUNNEL */
-  .funnel { display: flex; flex-direction: column; gap: 8px; }
-  .funnel-row { display: flex; align-items: center; gap: 12px; }
-  .funnel-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); width: 90px; flex-shrink: 0; }
-  .funnel-bar-wrap { flex: 1; background: var(--surface-2); border-radius: 2px; height: 20px; overflow: hidden; }
-  .funnel-bar { height: 100%; border-radius: 2px; transition: width 0.5s; }
-  .funnel-num { font-family: var(--font-mono); font-size: 12px; color: var(--text); width: 55px; text-align: right; }
-  .funnel-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); width: 42px; text-align: right; }
-
-  /* BARS - attribution, roles */
-  .bar-list { display: flex; flex-direction: column; gap: 6px; }
-  .bar-row { display: flex; align-items: center; gap: 10px; }
-  .bar-label { font-size: 12px; color: var(--text-muted); width: 120px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bar-track { flex: 1; background: var(--surface-2); border-radius: 2px; height: 14px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 2px; }
-  .bar-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); width: 30px; text-align: right; }
-  .bar-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); width: 38px; text-align: right; }
-
-  /* RETENTION PIE (text version) */
-  .retention-pie { display: flex; gap: 12px; flex-wrap: wrap; }
-  .ret-seg {
-    flex: 1; min-width: 100px;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    padding: 12px;
-    text-align: center;
-    border: 1px solid var(--border);
-  }
-  .ret-seg-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .ret-seg-label { font-size: 11px; color: var(--text-muted); }
-
-  /* SIGNALS */
-  .signals { display: flex; flex-direction: column; gap: 8px; }
-  .signal {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: var(--radius);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-  .signal.flag { background: var(--flag-dim); border: 1px solid #5a2020; color: #fca5a5; }
-  .signal.watch { background: var(--warn-dim); border: 1px solid #5a4500; color: #fde68a; }
-  .signal.positive { background: var(--accent-dim); border: 1px solid #1a5a30; color: #86efac; }
-  .signal-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-
-  /* EVENT TABLE */
-  .event-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .event-table th {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 8px 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .event-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-    color: var(--text-muted);
-  }
-  .event-table tr:last-child td { border-bottom: none; }
-  .event-table tr:hover td { background: var(--surface-2); }
-  .event-table td.name { color: var(--text); font-weight: 500; }
-  .event-table td.num { font-family: var(--font-mono); color: var(--text); }
-  .event-table td.green { font-family: var(--font-mono); color: var(--accent); }
-  .event-table td.yellow { font-family: var(--font-mono); color: var(--warn); }
-  .event-table td.red { font-family: var(--font-mono); color: var(--flag); }
-  .badge {
-    display: inline-block;
-    font-size: 9px;
-    font-family: var(--font-mono);
-    padding: 2px 6px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-right: 3px;
-    margin-bottom: 2px;
-  }
-  .badge.flag { background: var(--flag-dim); color: var(--flag); border: 1px solid #5a2020; }
-  .badge.watch { background: var(--warn-dim); color: var(--warn); border: 1px solid #5a4500; }
-  .badge.positive { background: var(--accent-dim); color: var(--accent); border: 1px solid #1a5a30; }
-
-  /* TYPE PILL */
-  .type-pill {
-    display: inline-block;
-    font-size: 10px;
-    font-family: var(--font-mono);
-    padding: 2px 8px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .type-pill.sgn { background: #1a2a3a; color: var(--blue); border: 1px solid #1e3a5f; }
-  .type-pill.speaker { background: #2a1a3a; color: var(--purple); border: 1px solid #3a1e5f; }
-  .type-pill.snackable { background: #2a1a10; color: var(--orange); border: 1px solid #5a3010; }
-  .type-pill.workshop { background: var(--accent-dim); color: var(--accent); border: 1px solid #1a5a30; }
-
-  /* CANVAS CHART */
-  .chart-wrap { position: relative; margin-bottom: 8px; }
-  canvas { display: block; width: 100%; }
-  .chart-controls { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
-  .chart-btn {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-muted);
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 4px 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .chart-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .chart-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  /* BENCHMARK TABLE */
-  .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  @media (max-width: 800px) { .bench-grid { grid-template-columns: repeat(2, 1fr); } }
-  .bench-card {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-  }
-  .bench-type { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
-  .bench-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .bench-label { font-size: 12px; color: var(--text-muted); }
-  .bench-val { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
-
-  /* PIPELINE */
-  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-  .pipeline-card {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .pipeline-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-  }
-  .pipeline-card.tier1::before { background: var(--accent); }
-  .pipeline-card.tier2::before { background: var(--blue); }
-  .pipeline-card.tier3::before { background: var(--purple); }
-  .pipeline-card.tier4::before { background: var(--warn); }
-  .pipeline-num { font-family: var(--font-mono); font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
-  .pipeline-label { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-  .pipeline-note { font-size: 10px; color: var(--text-dim); margin-top: 6px; font-family: var(--font-mono); }
-
-  /* MONTHLY VIEW */
-  .month-select-wrap { margin-bottom: 20px; }
-  select {
-    background: var(--surface-2);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    padding: 8px 14px;
-    cursor: pointer;
-    outline: none;
-  }
-  select:focus { border-color: var(--accent); }
-
-  /* SECTION LABELS */
-  .section-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 12px;
-    margin-top: 24px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  .section-label:first-child { margin-top: 0; }
-
-  /* CUMULATIVE CHART */
-  .cumul-bar-list { display: flex; flex-direction: column; gap: 10px; }
-  .cumul-row { display: flex; align-items: center; gap: 12px; }
-  .cumul-label { font-size: 11px; color: var(--text-muted); width: 220px; flex-shrink: 0; }
-  .cumul-track { flex: 1; background: var(--surface-2); border-radius: 2px; height: 18px; overflow: hidden; }
-  .cumul-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
-  .cumul-num { font-family: var(--font-mono); font-size: 12px; color: var(--text); width: 40px; text-align: right; }
-  .cumul-wording { font-family: var(--font-mono); font-size: 10px; width: 60px; text-align: right; }
-
-  /* TOOLTIP */
-  .tooltip {
-    position: absolute;
-    background: var(--surface);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
-    padding: 8px 12px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s;
-    z-index: 10;
-    white-space: nowrap;
-  }
-
-  /* MISC */
-  .text-green { color: var(--accent); }
-  .text-yellow { color: var(--warn); }
-  .text-red { color: var(--flag); }
-  .text-muted { color: var(--text-muted); }
-  .text-dim { color: var(--text-dim); }
-  .mono { font-family: var(--font-mono); }
-  .star { color: var(--warn); }
-  hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-  .flex-between { display: flex; justify-content: space-between; align-items: center; }
-  .event-name-big { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .event-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+:root{--green:#1a7a4c;--green-l:#e8f5ee;--blue:#2563eb;--ink:#1a2b23;--mut:#5c6b63;--bg:#f6f8f7;--card:#fff;--bd:#e2e8e5;--flag:#c0392b;--watch:#b7791f;--pos:#1a7a4c;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(135deg,#1a7a4c,#12603b);color:#fff;padding:26px 32px}
+header h1{font-size:22px;font-weight:700}
+header p{opacity:.9;font-size:13px;margin-top:4px}
+.tabs{display:flex;flex-wrap:wrap;gap:2px;background:#fff;border-bottom:1px solid var(--bd);padding:0 16px;position:sticky;top:0;z-index:10}
+.tab{padding:13px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.panel{display:none;padding:24px 32px;max-width:1180px;margin:0 auto}
+.panel.active{display:block}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
+.kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);font-weight:600}
+.kpi .val{font-size:30px;font-weight:700;margin-top:6px}
+.kpi .sub{font-size:12px;color:var(--mut);margin-top:2px}
+h2{font-size:16px;margin:26px 0 12px;font-weight:700}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px;font-weight:700}
+.funnel{display:flex;gap:10px;flex-wrap:wrap}
+.fstep{flex:1;min-width:120px;background:var(--green-l);border-radius:10px;padding:14px;text-align:center}
+.fstep .n{font-size:26px;font-weight:700;color:var(--green)}
+.fstep .t{font-size:12px;color:var(--mut);margin-top:2px}
+.bar{height:8px;background:#eef2f0;border-radius:6px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--green)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.row:last-child{border:0}
+.sig{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:8px;border-left:3px solid}
+.sig.flag{background:#fdecea;border-color:var(--flag)}
+.sig.watch{background:#fef6e7;border-color:var(--watch)}
+.sig.positive{background:var(--green-l);border-color:var(--pos)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--bd)}
+th{background:#f0f4f2;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+td.n,th.n{text-align:right}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-right:3px}
+.pill.flag{background:#fdecea;color:var(--flag)}
+.pill.watch{background:#fef6e7;color:var(--watch)}
+.pill.positive{background:var(--green-l);color:var(--pos)}
+select{padding:8px 12px;border:1px solid var(--bd);border-radius:8px;font-size:13px;background:#fff}
+canvas{width:100%!important;max-width:100%}
+.chartwrap{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.btn{padding:7px 14px;border:1px solid var(--bd);background:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--green)}
+.btn:hover{background:var(--green-l)}
+.two{grid-template-columns:1fr 1fr}
+@media(max-width:760px){.two{grid-template-columns:1fr}.panel{padding:18px}}
+.muted{color:var(--mut);font-size:12px}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="header-logo">CCL // Analytics</div>
-  <div class="header-sep"></div>
-  <div class="header-subtitle">Climate Conscious Leaders</div>
-  <div class="header-updated">Updated Jun 2026 · 14 events</div>
-</div>
-
-<div class="tabs">
-  <button class="tab active" onclick="showTab('latest', this)">Latest Event</button>
-  <button class="tab" onclick="showTab('monthly', this)">Monthly View</button>
-  <button class="tab" onclick="showTab('sgn-trend', this)">SGN Trend</button>
-  <button class="tab" onclick="showTab('speaker-trend', this)">Speaker Trend</button>
-  <button class="tab" onclick="showTab('snackable-trend', this)">Snackable Trend</button>
-  <button class="tab" onclick="showTab('benchmarks', this)">Type Benchmarks</button>
-  <button class="tab" onclick="showTab('all-events', this)">All Events</button>
-</div>
-
-<!-- ===== TAB: LATEST EVENT ===== -->
-<div id="tab-latest" class="tab-content active">
-  <div class="flex-between" style="margin-bottom:20px">
-    <div>
-      <div class="event-name-big">Charging Forward: What's Next for EVs &amp; V2G Innovation <span class="star">★</span></div>
-      <div class="event-meta">Speaker Series · Jun 4, 2026 · Most recent event</div>
-    </div>
-    <div class="type-pill speaker">Speaker Series</div>
-  </div>
-
-  <div class="kpi-grid">
-    <div class="kpi green">
-      <div class="kpi-label">Registrations</div>
-      <div class="kpi-value">139</div>
-      <div class="kpi-sub">+72% vs Mar 2026 (81)</div>
-    </div>
-    <div class="kpi yellow">
-      <div class="kpi-label">Attendance Rate</div>
-      <div class="kpi-value">47.5%</div>
-      <div class="kpi-sub">66 of 139 attended</div>
-    </div>
-    <div class="kpi green">
-      <div class="kpi-label">Satisfaction</div>
-      <div class="kpi-value">5.0</div>
-      <div class="kpi-sub">5 responses</div>
-    </div>
-    <div class="kpi green">
-      <div class="kpi-label">Catalyst Intent</div>
-      <div class="kpi-value">23%</div>
-      <div class="kpi-sub">32 of 139 · Best Speaker ever</div>
-    </div>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Registration Funnel</div>
-      <div class="funnel">
-        <div class="funnel-row">
-          <div class="funnel-label">Invited</div>
-          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%;background:var(--border-light)"></div></div>
-          <div class="funnel-num">622</div>
-          <div class="funnel-pct">100%</div>
-        </div>
-        <div class="funnel-row">
-          <div class="funnel-label">Registered</div>
-          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:22.3%;background:var(--blue)"></div></div>
-          <div class="funnel-num">139</div>
-          <div class="funnel-pct">22.3%</div>
-        </div>
-        <div class="funnel-row">
-          <div class="funnel-label">Attended</div>
-          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:10.6%;background:var(--accent)"></div></div>
-          <div class="funnel-num">66</div>
-          <div class="funnel-pct">47.5%</div>
-        </div>
-        <div class="funnel-row">
-          <div class="funnel-label">Catalyst Yes</div>
-          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:5.1%;background:var(--purple)"></div></div>
-          <div class="funnel-num">32</div>
-          <div class="funnel-pct">23.0%</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Retention Breakdown</div>
-      <div class="retention-pie" style="margin-bottom:14px">
-        <div class="ret-seg">
-          <div class="ret-seg-val" style="color:var(--blue)">77%</div>
-          <div class="ret-seg-label">First-timers<br><span class="mono" style="font-size:11px">107 people</span></div>
-        </div>
-        <div class="ret-seg">
-          <div class="ret-seg-val" style="color:var(--accent)">20%</div>
-          <div class="ret-seg-label">Returning 2–4<br><span class="mono" style="font-size:11px">28 people</span></div>
-        </div>
-        <div class="ret-seg">
-          <div class="ret-seg-val" style="color:var(--purple)">3%</div>
-          <div class="ret-seg-label">Loyalists 5+<br><span class="mono" style="font-size:11px">4 people</span></div>
-        </div>
-      </div>
-      <div class="signal watch"><span class="signal-icon">⚠</span> 77% first-timers is above typical — strong new audience acquisition from Toronto Climate Week partnership.</div>
-    </div>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Attribution — How They Heard About CCL</div>
-      <div class="bar-list">
-        <div class="bar-row">
-          <div class="bar-label">Climate Week</div>
-          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
-          <div class="bar-num">44</div>
-          <div class="bar-pct">45.4%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Direct referral</div>
-          <div class="bar-track"><div class="bar-fill" style="width:36%;background:var(--blue)"></div></div>
-          <div class="bar-num">16</div>
-          <div class="bar-pct">16.5%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Luma organic</div>
-          <div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--purple)"></div></div>
-          <div class="bar-num">10</div>
-          <div class="bar-pct">10.3%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Slack/Community</div>
-          <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--orange)"></div></div>
-          <div class="bar-num">9</div>
-          <div class="bar-pct">9.3%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">LinkedIn</div>
-          <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--blue)"></div></div>
-          <div class="bar-num">8</div>
-          <div class="bar-pct">8.2%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Newsletter/CTVC</div>
-          <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--warn)"></div></div>
-          <div class="bar-num">5</div>
-          <div class="bar-pct">5.2%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Women in Product</div>
-          <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--accent-mid)"></div></div>
-          <div class="bar-num">5</div>
-          <div class="bar-pct">5.2%</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Top Roles</div>
-      <div class="bar-list">
-        <div class="bar-row">
-          <div class="bar-label">PM</div>
-          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
-          <div class="bar-num">21</div>
-          <div class="bar-pct">33%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Consultant</div>
-          <div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--blue)"></div></div>
-          <div class="bar-num">18</div>
-          <div class="bar-pct">28%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Product Manager</div>
-          <div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--purple)"></div></div>
-          <div class="bar-num">3</div>
-          <div class="bar-pct">5%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Design</div>
-          <div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--orange)"></div></div>
-          <div class="bar-num">2</div>
-          <div class="bar-pct">3%</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Student</div>
-          <div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--warn)"></div></div>
-          <div class="bar-num">2</div>
-          <div class="bar-pct">3%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Signals &amp; Flags</div>
-    <div class="signals">
-      <div class="signal positive"><span class="signal-icon">✅</span> Registrations 139 — largest Speaker Series ever, up 72% vs Mar 2026 (81). Record for this event type.</div>
-      <div class="signal positive"><span class="signal-icon">✅</span> Catalyst intent 23.0% — best ever for Speaker Series, up from 16% in Mar 2026. Approaching SGN benchmark of 25%.</div>
-      <div class="signal positive"><span class="signal-icon">✅</span> Toronto Climate Week drove 32% of registrations (44 people) — a strong new partnership channel. Follow up for Q3 2026.</div>
-      <div class="signal watch"><span class="signal-icon">⚠</span> Attendance 47.5% — in watch zone (&lt;50%). Highest raw attended count (66) for Speaker Series, but rate below benchmark. Pre-event reminder email still untested.</div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ===== TAB: MONTHLY VIEW ===== -->
-<div id="tab-monthly" class="tab-content">
-  <div class="month-select-wrap">
-    <select id="month-select" onchange="renderMonthly()">
-      <option value="2025-06">Jun 2025</option>
-      <option value="2025-07">Jul 2025</option>
-      <option value="2025-08">Aug 2025</option>
-      <option value="2025-09">Sep 2025</option>
-      <option value="2025-10">Oct 2025</option>
-      <option value="2025-11">Nov 2025</option>
-      <option value="2025-12">Dec 2025</option>
-      <option value="2026-01">Jan 2026</option>
-      <option value="2026-02">Feb 2026</option>
-      <option value="2026-03">Mar 2026</option>
-      <option value="2026-04">Apr 2026</option>
-      <option value="2026-05">May 2026</option>
-      <option value="2026-06" selected>Jun 2026</option>
-    </select>
-  </div>
-  <div id="monthly-content"></div>
-</div>
-
-<!-- ===== TAB: SGN TREND ===== -->
-<div id="tab-sgn-trend" class="tab-content">
-  <div class="card-title" style="margin-bottom:16px">Small Group Networking — Trend Analysis</div>
-  <div class="chart-controls">
-    <button class="chart-btn active" id="sgn-btn-6" onclick="setSGNRange(6)">Last 6</button>
-    <button class="chart-btn" id="sgn-btn-all" onclick="setSGNRange('all')">All Time</button>
-  </div>
-  <div class="card">
-    <div class="card-title">Registrations</div>
-    <div class="chart-wrap"><canvas id="sgn-regs-chart" height="200"></canvas></div>
-  </div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Attendance Rate</div>
-      <div class="chart-wrap"><canvas id="sgn-att-chart" height="200"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Satisfaction Score</div>
-      <div class="chart-wrap"><canvas id="sgn-sat-chart" height="200"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TAB: SPEAKER TREND ===== -->
-<div id="tab-speaker-trend" class="tab-content">
-  <div class="card-title" style="margin-bottom:16px">Speaker Series — Trend Analysis</div>
-  <div class="chart-controls">
-    <button class="chart-btn active" id="sp-btn-6" onclick="setSPRange(6)">Last 6</button>
-    <button class="chart-btn" id="sp-btn-all" onclick="setSPRange('all')">All Time</button>
-  </div>
-  <div class="card">
-    <div class="card-title">Registrations</div>
-    <div class="chart-wrap"><canvas id="sp-regs-chart" height="200"></canvas></div>
-  </div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Attendance Rate</div>
-      <div class="chart-wrap"><canvas id="sp-att-chart" height="200"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Satisfaction Score</div>
-      <div class="chart-wrap"><canvas id="sp-sat-chart" height="200"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TAB: SNACKABLE TREND ===== -->
-<div id="tab-snackable-trend" class="tab-content">
-  <div class="card-title" style="margin-bottom:16px">Snackable Skills — Trend Analysis</div>
-  <div class="chart-controls">
-    <button class="chart-btn active" id="sn-btn-all" onclick="setSNRange('all')">All Time</button>
-  </div>
-  <div class="card">
-    <div class="card-title">Registrations</div>
-    <div class="chart-wrap"><canvas id="sn-regs-chart" height="200"></canvas></div>
-  </div>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Attendance Rate</div>
-      <div class="chart-wrap"><canvas id="sn-att-chart" height="200"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Satisfaction Score</div>
-      <div class="chart-wrap"><canvas id="sn-sat-chart" height="200"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TAB: BENCHMARKS ===== -->
-<div id="tab-benchmarks" class="tab-content">
-  <div class="card-title" style="margin-bottom:16px">Type Benchmarks — All Event Types Side by Side</div>
-
-  <div class="section-label">Community Retention Metrics</div>
-  <div class="pipeline-grid" style="margin-bottom:16px">
-    <div class="pipeline-card tier1">
-      <div class="pipeline-num" style="color:var(--accent)">501</div>
-      <div class="pipeline-label">Total unique people ever registered</div>
-      <div class="pipeline-note">Deduped by email · All 13 CSVs</div>
-    </div>
-    <div class="pipeline-card tier2">
-      <div class="pipeline-num" style="color:var(--blue)">267</div>
-      <div class="pipeline-label">Unique people who attended at least once</div>
-      <div class="pipeline-note">53.3% of all registered</div>
-    </div>
-    <div class="pipeline-card tier3">
-      <div class="pipeline-num" style="color:var(--accent)">34.5%</div>
-      <div class="pipeline-label">Return rate (registered in 2+ events)</div>
-      <div class="pipeline-note">173 of 501 · Healthy range: 20–40%</div>
-    </div>
-    <div class="pipeline-card tier4">
-      <div class="pipeline-num" style="color:var(--purple)">32</div>
-      <div class="pipeline-label">Loyalists — attended 3+ events</div>
-      <div class="pipeline-note">Core community anchors</div>
-    </div>
-  </div>
-
-  <div class="section-label">Catalyst Membership Pipeline</div>
-  <div class="pipeline-grid" style="margin-bottom:16px">
-    <div class="pipeline-card tier1">
-      <div class="pipeline-num" style="color:var(--accent)">99</div>
-      <div class="pipeline-label">Unique people ever expressing Catalyst interest</div>
-      <div class="pipeline-note">Any "yes" across all events · fully deduped</div>
-    </div>
-    <div class="pipeline-card tier2">
-      <div class="pipeline-num" style="color:var(--blue)">9</div>
-      <div class="pipeline-label">High-intent — said yes at 2+ events</div>
-      <div class="pipeline-note">Strongest pipeline signal</div>
-    </div>
-    <div class="pipeline-card tier3">
-      <div class="pipeline-num" style="color:var(--accent)">78</div>
-      <div class="pipeline-label">Reliable pipeline (Feb 2026+ "Catalyst" wording)</div>
-      <div class="pipeline-note">Comparable baseline from Feb 2026</div>
-    </div>
-    <div class="pipeline-card tier4">
-      <div class="pipeline-num" style="color:var(--purple)">99</div>
-      <div class="pipeline-label">Cumulative unique Catalyst yeses (incl. Jun 2026)</div>
-      <div class="pipeline-note">Fully deduped by email · Jun 2026</div>
-    </div>
-  </div>
-
-  <div class="section-label">Event Type Averages</div>
-  <div class="bench-grid">
-    <div class="bench-card">
-      <div class="bench-type" style="color:var(--blue)">SGN</div>
-      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">5</div></div>
-      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">67</div></div>
-      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">49.3%</div></div>
-      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.6</div></div>
-      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">25.0%</div></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-type" style="color:var(--purple)">Speaker Series</div>
-      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">5</div></div>
-      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">76</div></div>
-      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">48.1%</div></div>
-      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.8</div></div>
-      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">26.7%</div></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-type" style="color:var(--orange)">Snackable Skills</div>
-      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">3</div></div>
-      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">63</div></div>
-      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">40.8%</div></div>
-      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.8</div></div>
-      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">17.0%</div></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-type" style="color:var(--accent)">Workshop</div>
-      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">1</div></div>
-      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">10</div></div>
-      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--accent)">80.0%</div></div>
-      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">5.0</div></div>
-      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--text-dim)">—</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== TAB: ALL EVENTS ===== -->
-<div id="tab-all-events" class="tab-content">
-  <div class="card-title" style="margin-bottom:16px">All Events — Chronological · 14 total</div>
-  <div style="overflow-x:auto">
-  <table class="event-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Event</th>
-        <th>Type</th>
-        <th>Regs</th>
-        <th>Attended</th>
-        <th>Att Rate</th>
-        <th>Satisfaction</th>
-        <th>Catalyst</th>
-        <th>Signals</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono text-dim">Jun 2025</td>
-        <td class="name">Speaker – PM Guest Talk</td>
-        <td><span class="type-pill speaker">Speaker</span></td>
-        <td class="num">50</td>
-        <td class="num">24</td>
-        <td class="yellow">48.0%</td>
-        <td class="text-dim">—</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Jul 2025</td>
-        <td class="name">SGN – Jul 2025</td>
-        <td><span class="type-pill sgn">SGN</span></td>
-        <td class="num">49</td>
-        <td class="num">25</td>
-        <td class="yellow">51.0%</td>
-        <td class="green">4.5</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Aug 2025</td>
-        <td class="name">Speaker – Designing for Impact</td>
-        <td><span class="type-pill speaker">Speaker</span></td>
-        <td class="num">77</td>
-        <td class="num">37</td>
-        <td class="yellow">48.1%</td>
-        <td class="green">4.5</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Sep 2025</td>
-        <td class="name">SGN – Sep 2025</td>
-        <td><span class="type-pill sgn">SGN</span></td>
-        <td class="num">29</td>
-        <td class="num">17</td>
-        <td class="green">58.6%</td>
-        <td class="text-dim">—</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Oct 2025</td>
-        <td class="name">SGN – Oct 2025 (Virtual/SDCW)</td>
-        <td><span class="type-pill sgn">SGN</span></td>
-        <td class="num">83</td>
-        <td class="num">38</td>
-        <td class="yellow">45.8%</td>
-        <td class="green">4.0</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Oct 2025</td>
-        <td class="name">Workshop – Ideate Design Build</td>
-        <td><span class="type-pill workshop">Workshop</span></td>
-        <td class="num">10</td>
-        <td class="num">8</td>
-        <td class="green">80.0%</td>
-        <td class="green">5.0</td>
-        <td class="text-dim">—</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Nov 2025</td>
-        <td class="name">Snackable – Sustainable Compute</td>
-        <td><span class="type-pill snackable">Snackable</span></td>
-        <td class="num">49</td>
-        <td class="num">18</td>
-        <td class="red">36.7%</td>
-        <td class="green">4.3</td>
-        <td class="yellow">18.4%*</td>
-        <td><span class="badge flag">flag</span></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Dec 2025</td>
-        <td class="name">Speaker – Hollywood Storytelling</td>
-        <td><span class="type-pill speaker">Speaker</span></td>
-        <td class="num">34</td>
-        <td class="num">17</td>
-        <td class="yellow">50.0%</td>
-        <td class="green">5.0</td>
-        <td class="yellow">41.2%*</td>
-        <td><span class="badge watch">watch</span></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Jan 2026</td>
-        <td class="name">SGN – Jan 2026</td>
-        <td><span class="type-pill sgn">SGN</span></td>
-        <td class="num">71</td>
-        <td class="num">35</td>
-        <td class="yellow">49.3%</td>
-        <td class="green">5.0</td>
-        <td class="yellow">36.6%*</td>
-        <td><span class="badge watch">watch</span></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Feb 2026</td>
-        <td class="name">Snackable – Product Market Earth Fit</td>
-        <td><span class="type-pill snackable">Snackable</span></td>
-        <td class="num">78</td>
-        <td class="num">29</td>
-        <td class="red">37.2%</td>
-        <td class="green">5.0</td>
-        <td class="yellow">16.7%</td>
-        <td><span class="badge flag">flag</span></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Mar 2026</td>
-        <td class="name">Speaker – Climate Conscious Convos</td>
-        <td><span class="type-pill speaker">Speaker</span></td>
-        <td class="num">81</td>
-        <td class="num">38</td>
-        <td class="yellow">46.9%</td>
-        <td class="green">4.7</td>
-        <td class="yellow">16.0%</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">Apr 2026</td>
-        <td class="name">SGN – Q2 2026 (Apr)</td>
-        <td><span class="type-pill sgn">SGN</span></td>
-        <td class="num">105</td>
-        <td class="num">45</td>
-        <td class="yellow">42.9%</td>
-        <td class="green">4.6</td>
-        <td class="green">24.8%</td>
-        <td><span class="badge watch">watch</span><span class="badge positive">✅</span></td>
-      </tr>
-      <tr>
-        <td class="mono text-dim">May 2026</td>
-        <td class="name">Snackable – Growth without the Footprint</td>
-        <td><span class="type-pill snackable">Snackable</span></td>
-        <td class="num">62</td>
-        <td class="num">30</td>
-        <td class="yellow">48.4%</td>
-        <td class="green">5.0</td>
-        <td class="text-dim">—</td>
-        <td><span class="badge positive">✅</span></td>
-      </tr>
-      <tr style="background:rgba(74,222,128,0.04)">
-        <td class="mono" style="color:var(--accent)">Jun 2026 ★</td>
-        <td class="name" style="color:var(--accent)">Speaker – Charging Forward (EVs &amp; V2G)</td>
-        <td><span class="type-pill speaker">Speaker</span></td>
-        <td class="num" style="color:var(--accent)">139</td>
-        <td class="num" style="color:var(--accent)">66</td>
-        <td class="yellow">47.5%</td>
-        <td class="green">5.0</td>
-        <td class="green">23.0%</td>
-        <td><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-  <div style="margin-top:10px;font-size:11px;color:var(--text-dim);font-family:var(--font-mono)">
-    * Nov 2025, Dec 2025, Jan 2026 used "Premium Membership" wording — higher rates not directly comparable to Feb 2026+ Catalyst baseline.
-  </div>
-</div>
-
+<header><h1>CCL Event Analytics Dashboard</h1><p id="hdr-sub"></p></header>
+<div class="tabs" id="tabs"></div>
+<div id="panels"></div>
+<script id="ccl-data" type="application/json">{"events": [{"name": "Speaker \u2013 PM Guest Talk", "type": "Speaker Series", "date": "Jun 2025", "month": "2025-06", "total_invites": 159, "registrations": 50, "attended": 24, "attendance_rate": 48.0, "avg_rating": null, "rating_responses": 0, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 0, "returning_2_4": 0, "returning_5plus": 0, "attribution": {}, "top_roles": [], "signals": []}, {"name": "SGN \u2013 Jul 2025", "type": "Small Group Networking", "date": "Jul 2025", "month": "2025-07", "total_invites": 202, "registrations": 49, "attended": 25, "attendance_rate": 51.0, "avg_rating": 4.5, "rating_responses": 2, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 37, "returning_2_4": 12, "returning_5plus": 0, "attribution": {"Slack/Community": 12, "Other": 8, "Terra.do": 3, "LinkedIn": 2, "Direct referral": 1, "Newsletter/CTVC": 1, "Climate Week": 1}, "top_roles": [["pm", 13], ["consultant", 4], ["product manager", 3], ["engineer", 1], ["founder", 1]], "signals": []}, {"name": "Speaker \u2013 Designing for Impact", "type": "Speaker Series", "date": "Aug 2025", "month": "2025-08", "total_invites": 251, "registrations": 77, "attended": 37, "attendance_rate": 48.1, "avg_rating": 4.5, "rating_responses": 6, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 55, "returning_2_4": 0, "returning_5plus": 0, "attribution": {"Other": 41, "Newsletter/CTVC": 14, "Luma organic": 8, "Direct referral": 5, "Slack/Community": 5, "LinkedIn": 3, "Terra.do": 1}, "top_roles": [["pm", 12], ["consultant", 3], ["design", 2], ["student", 2]], "signals": []}, {"name": "SGN \u2013 Sep 2025", "type": "Small Group Networking", "date": "Sep 2025", "month": "2025-09", "total_invites": 29, "registrations": 29, "attended": 17, "attendance_rate": 58.6, "avg_rating": null, "rating_responses": 0, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 22, "returning_2_4": 0, "returning_5plus": 0, "attribution": {"Other": 11, "Slack/Community": 4, "Luma organic": 4, "Direct referral": 3, "Terra.do": 3, "LinkedIn": 2, "Newsletter/CTVC": 2}, "top_roles": [["pm", 7], ["founder", 2], ["cpto", 1]], "signals": []}, {"name": "SGN \u2013 Oct 2025 (Virtual/SDCW)", "type": "Small Group Networking", "date": "Oct 2025", "month": "2025-10", "total_invites": 316, "registrations": 83, "attended": 38, "attendance_rate": 45.8, "avg_rating": 4.0, "rating_responses": 2, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 58, "returning_2_4": 18, "returning_5plus": 2, "attribution": {"Other": 19, "Climate Week": 14, "LinkedIn": 4, "Slack/Community": 4, "Luma organic": 4, "Direct referral": 3, "Newsletter/CTVC": 3, "Women in Product": 1}, "top_roles": [["pm", 14], ["consultant", 8], ["founder", 4], ["ceo", 2]], "signals": []}, {"name": "Workshop \u2013 Ideate Design Build", "type": "Workshop", "date": "Oct 2025", "month": "2025-10", "total_invites": 10, "registrations": 10, "attended": 8, "attendance_rate": 80.0, "avg_rating": 5.0, "rating_responses": 1, "catalyst_yes": 0, "catalyst_rate": null, "first_timers": 0, "returning_2_4": 0, "returning_5plus": 0, "attribution": {"Other": 2, "Climate Week": 2, "Partner orgs": 1, "LinkedIn": 1, "Direct referral": 1}, "top_roles": [["student", 2], ["educator", 1], ["founder", 1]], "signals": []}, {"name": "Snackable Skills \u2013 Sustainable Compute", "type": "Snackable Skills", "date": "Nov 2025", "month": "2025-11", "total_invites": 341, "registrations": 49, "attended": 18, "attendance_rate": 36.7, "avg_rating": 4.3, "rating_responses": 3, "catalyst_yes": 9, "catalyst_rate": 18.4, "catalyst_wording": "Premium", "first_timers": 19, "returning_2_4": 3, "returning_5plus": 2, "attribution": {"Other": 23, "Luma organic": 7, "LinkedIn": 6, "Slack/Community": 5, "Newsletter/CTVC": 3, "Terra.do": 2, "Climate Week": 1}, "top_roles": [["pm", 7], ["dev", 2], ["ceo", 2]], "signals": [{"type": "flag", "text": "Attendance 36.7% below 40% threshold."}, {"type": "positive", "text": "Satisfaction 4.3 held despite low attendance \u2014 content not the issue."}]}, {"name": "Speaker \u2013 Hollywood Storytelling", "type": "Speaker Series", "date": "Dec 2025", "month": "2025-12", "total_invites": 372, "registrations": 34, "attended": 17, "attendance_rate": 50.0, "avg_rating": 5.0, "rating_responses": 1, "catalyst_yes": 14, "catalyst_rate": 41.2, "catalyst_wording": "Premium", "first_timers": 16, "returning_2_4": 13, "returning_5plus": 2, "attribution": {"Other": 11, "Luma organic": 5, "LinkedIn": 5, "Slack/Community": 4, "Direct referral": 4, "Climate Week": 3}, "top_roles": [["pm", 10], ["consultant", 3], ["founder", 2]], "signals": [{"type": "watch", "text": "41.2% used 'Premium Membership' wording \u2014 not comparable to Feb 2026+ baseline."}]}, {"name": "SGN \u2013 Jan 2026", "type": "Small Group Networking", "date": "Jan 2026", "month": "2026-01", "total_invites": 391, "registrations": 71, "attended": 35, "attendance_rate": 49.3, "avg_rating": 5.0, "rating_responses": 7, "catalyst_yes": 26, "catalyst_rate": 36.6, "catalyst_wording": "Premium", "first_timers": 37, "returning_2_4": 22, "returning_5plus": 7, "attribution": {"Other": 24, "Slack/Community": 20, "Luma organic": 9, "Terra.do": 5, "Direct referral": 5}, "top_roles": [["pm", 14], ["consultant", 7], ["product manager", 4], ["design", 3], ["founder", 3]], "signals": [{"type": "watch", "text": "36.6% used 'Premium Membership' wording \u2014 treat as directional."}]}, {"name": "Snackable Skills \u2013 Product Market Earth Fit", "type": "Snackable Skills", "date": "Feb 2026", "month": "2026-02", "total_invites": 411, "registrations": 78, "attended": 29, "attendance_rate": 37.2, "avg_rating": 5.0, "rating_responses": 2, "catalyst_yes": 13, "catalyst_rate": 16.7, "catalyst_wording": "Catalyst", "first_timers": 40, "returning_2_4": 25, "returning_5plus": 7, "attribution": {"Other": 27, "Luma organic": 13, "Direct referral": 10, "LinkedIn": 8, "Slack/Community": 7, "Terra.do": 6, "Newsletter/CTVC": 2}, "top_roles": [["pm", 18], ["consultant", 9], ["ceo", 3], ["design", 3]], "signals": [{"type": "flag", "text": "Attendance 37.2% below 40% threshold."}]}, {"name": "Speaker \u2013 Climate Conscious Convos", "type": "Speaker Series", "date": "Mar 2026", "month": "2026-03", "total_invites": 438, "registrations": 81, "attended": 38, "attendance_rate": 46.9, "avg_rating": 4.7, "rating_responses": 6, "catalyst_yes": 13, "catalyst_rate": 16.0, "catalyst_wording": "Catalyst", "first_timers": 39, "returning_2_4": 28, "returning_5plus": 6, "attribution": {"Other": 24, "Luma organic": 17, "LinkedIn": 7, "Direct referral": 6, "Newsletter/CTVC": 4, "Terra.do": 4, "Climate Week": 2, "Slack/Community": 2}, "top_roles": [["pm", 11], ["consultant", 5], ["design", 4], ["product manager", 3], ["founder", 2]], "signals": []}, {"name": "SGN \u2013 Q2 2026 (Apr)", "type": "Small Group Networking", "date": "Apr 2026", "month": "2026-04", "total_invites": 499, "registrations": 105, "attended": 45, "attendance_rate": 42.9, "avg_rating": 4.6, "rating_responses": 9, "catalyst_yes": 26, "catalyst_rate": 24.8, "catalyst_wording": "Catalyst", "first_timers": 77, "returning_2_4": 22, "returning_5plus": 6, "attribution": {"Climate Week": 47, "Other": 19, "Luma organic": 10, "Women in Product": 8, "LinkedIn": 6, "Slack/Community": 5, "Newsletter/CTVC": 5, "Terra.do": 4, "Direct referral": 3}, "top_roles": [["pm", 15], ["consultant", 14], ["founder", 7], ["ceo", 3], ["design", 3]], "signals": [{"type": "watch", "text": "Attendance 42.9% \u2014 watch as registrations scale."}, {"type": "positive", "text": "Climate Week drove 45% of regs \u2014 Q3 partner critical."}]}, {"name": "Snackable Skills \u2013 Growth without the Footprint", "type": "Snackable Skills", "date": "May 2026", "month": "2026-05", "total_invites": 540, "registrations": 62, "attended": 30, "attendance_rate": 48.4, "avg_rating": 5.0, "rating_responses": 1, "catalyst_yes": 0, "catalyst_rate": null, "catalyst_wording": null, "first_timers": 26, "returning_2_4": 20, "returning_5plus": 6, "attribution": {"Other": 21, "CCL email/existing": 20, "Climate Week": 6, "Newsletter/CTVC": 5, "Luma organic": 3, "Slack/Community": 2, "Direct referral": 2, "Terra.do": 1, "LinkedIn": 1}, "top_roles": [["pm", 12], ["founder/ceo", 11], ["dev", 5], ["consultant", 5], ["design", 2]], "signals": [{"type": "positive", "text": "Attendance 48.4% \u2014 best Snackable rate yet, up from 36\u201337%."}, {"type": "watch", "text": "No Catalyst question on this form \u2014 pipeline data unavailable."}, {"type": "flag", "text": "Registrations -20.5% vs Feb 2026 Snackable (62 vs 78). Watch trend."}]}, {"name": "Speaker \u2013 Charging Forward (EVs & V2G)", "type": "Speaker Series", "date": "Jun 2026", "month": "2026-06", "total_invites": 622, "registrations": 139, "attended": 66, "attendance_rate": 47.5, "avg_rating": 5.0, "rating_responses": 5, "catalyst_yes": 32, "catalyst_rate": 23.0, "catalyst_wording": "Catalyst", "first_timers": 107, "returning_2_4": 28, "returning_5plus": 4, "attribution": {"Climate Week": 44, "Direct referral": 16, "Luma organic": 10, "Slack/Community": 9, "LinkedIn": 8, "Newsletter/CTVC": 5, "Women in Product": 5}, "top_roles": [["pm", 21], ["consultant", 18], ["product manager", 3], ["design", 2], ["student", 2]], "signals": [{"type": "positive", "text": "Registrations 139 \u2014 largest Speaker Series ever, up 72% vs Mar 2026 (81)."}, {"type": "positive", "text": "Catalyst intent 23.0% \u2014 best ever for Speaker Series, up from 16%."}, {"type": "positive", "text": "Climate Week drove 32% of regs \u2014 Toronto Climate Week a strong new partnership channel."}, {"type": "watch", "text": "Attendance 47.5% \u2014 in watch range. Highest raw attended count (66) for Speaker Series yet."}]}, {"name": "SGN \u2013 Q3 2026 (Jul)", "type": "Small Group Networking", "date": "Jul 2026", "month": "2026-07", "total_invites": 599, "registrations": 113, "attended": 50, "attendance_rate": 44.2, "avg_rating": 4.25, "rating_responses": 4, "catalyst_yes": 39, "catalyst_rate": 34.5, "catalyst_wording": "Catalyst", "first_timers": 91, "returning_2_4": 18, "returning_5plus": 4, "attribution": {"Other": 42, "Climate Week": 19, "Luma organic": 18, "Direct referral": 15, "LinkedIn": 6, "Slack/Community": 4, "Partner orgs": 3, "Newsletter/CTVC": 2, "Terra.do": 1}, "top_roles": [["pm", 19], ["consultant", 9], ["student", 5], ["dev", 4], ["analyst", 3], ["ceo", 3]], "signals": [{"type": "positive", "text": "Registrations 113 \u2014 up 7.6% vs Apr 2026 SGN (105). Sustained growth."}, {"type": "positive", "text": "Catalyst intent 34.5% \u2014 well above 25% SGN baseline; strongest reliable-wording SGN yet. Plus 5 existing Catalyst members re-registered."}, {"type": "watch", "text": "Attendance 44.2% \u2014 in watch range (<50%). Consistent with SGN scaling pattern."}, {"type": "watch", "text": "Climate Week (PNW/PwC) drove 24% of attributed regs \u2014 partner channel dependency continues."}]}], "pipeline": {"total_unique_people": 565, "unique_attended": 299, "ever_said_yes": 110, "high_intent_2plus": 14, "single_yes": 96, "reliable_catalyst_feb_onward": 109, "return_rate_registered_pct": 34.0, "return_rate_attended_pct": 23.1, "loyalists_3plus_attended": 35, "last_updated": "Jul 2026", "notes": "Deduped by email across all event CSVs (Sep 2025 SGN CSV unavailable, minor undercount). Nov 2025\u2013Jan 2026 used 'Premium Membership' wording (softer). Feb 2026+ = 'Catalyst Membership' (reliable). May 2026 Snackable had no membership question.", "cumulative_by_event": [{"event": "Snackable Skills \u2013 Sustainable Compute", "date": "Nov 2025", "cumulative_unique_yes": 9, "wording": "Premium"}, {"event": "Speaker \u2013 Hollywood Storytelling", "date": "Dec 2025", "cumulative_unique_yes": 22, "wording": "Premium"}, {"event": "SGN \u2013 Jan 2026", "date": "Jan 2026", "cumulative_unique_yes": 42, "wording": "Premium"}, {"event": "Snackable Skills \u2013 Product Market Earth Fit", "date": "Feb 2026", "cumulative_unique_yes": 51, "wording": "Catalyst"}, {"event": "Speaker \u2013 Climate Conscious Convos", "date": "Mar 2026", "cumulative_unique_yes": 60, "wording": "Catalyst"}, {"event": "SGN \u2013 Q2 2026 (Apr)", "date": "Apr 2026", "cumulative_unique_yes": 84, "wording": "Catalyst"}, {"event": "Speaker \u2013 Charging Forward (EVs & V2G)", "date": "Jun 2026", "cumulative_unique_yes": 116, "wording": "Catalyst"}, {"event": "SGN \u2013 Q3 2026 (Jul)", "date": "Jul 2026", "cumulative_unique_yes": 110, "wording": "Catalyst"}]}, "retention": {"total_unique_registered": 565, "total_unique_attended": 299, "returned_registered_count": 192, "return_rate_registered_pct": 34.0, "returned_attended_count": 69, "return_rate_attended_pct": 23.1, "loyalists_3plus": 35, "type_gap": {"Small Group Networking": {"registered": 316, "attended": 148, "gap_pct": 53.2}, "Speaker Series": {"registered": 311, "attended": 160, "gap_pct": 48.6}, "Snackable Skills": {"registered": 153, "attended": 62, "gap_pct": 59.5}, "Workshop": {"registered": 10, "attended": 8, "gap_pct": 20.0}}, "last_updated": "Jul 2026", "notes": "Deduped by email across all event CSVs. Loyalty tiers based on actual attended count."}, "benchmarks": {"Small Group Networking": {"events": 6, "avg_regs": 75, "avg_att_rate": 48.6, "avg_satisfaction": 4.5, "avg_catalyst_pct": 29.6}, "Speaker Series": {"events": 5, "avg_regs": 76, "avg_att_rate": 48.1, "avg_satisfaction": 4.8, "avg_catalyst_pct": 26.7}, "Snackable Skills": {"events": 3, "avg_regs": 63, "avg_att_rate": 40.8, "avg_satisfaction": 4.8, "avg_catalyst_pct": 17.0}, "Workshop": {"events": 1, "avg_regs": 10, "avg_att_rate": 80.0, "avg_satisfaction": 5.0, "avg_catalyst_pct": null}}, "schema_version": "2.0", "schema_notes": "v2.0 adds: catalyst_wording per event, retention block, benchmarks block, unique_attended to pipeline. When adding new events: insert in chronological order, recalculate retention block from CSVs, update pipeline cumulative_by_event if catalyst question present, update benchmarks averages."}</script>
 <script>
-// ===== TAB SWITCHING =====
-function showTab(id, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
+var DB = JSON.parse(document.getElementById('ccl-data').textContent);
+var EV = DB.events.slice().sort(function(a,b){return a.month<b.month?-1:a.month>b.month?1:0;});
+var TYPES=['Small Group Networking','Speaker Series','Snackable Skills','Workshop'];
+var TABS=['Latest Event','Monthly View','SGN Trend','Speaker Trend','Snackable Trend','Type Benchmarks','All Events'];
 
-  // Always render charts when tab is shown (handles resize/first-load)
-  if (id === 'sgn-trend') { initSGNCharts(); window.sgnInited = true; }
-  if (id === 'speaker-trend') { initSPCharts(); window.spInited = true; }
-  if (id === 'snackable-trend') { initSNCharts(); window.snInited = true; }
-  if (id === 'monthly') { renderMonthly(); window.monthlyInited = true; }
-}
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function pct(x){return x==null?'-':x.toFixed(1)+'%';}
+function num(x){return x==null?'-':x;}
 
-// ===== DATA =====
-const ALL_EVENTS = [
-  { name:"Speaker - PM Guest Talk", type:"Speaker Series", date:"Jun 2025", month:"2025-06", registrations:50, attended:24, attendance_rate:48.0, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{}, top_roles:[], signals:[] },
-  { name:"SGN - Jul 2025", type:"Small Group Networking", date:"Jul 2025", month:"2025-07", registrations:49, attended:25, attendance_rate:51.0, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:37, returning_2_4:12, returning_5plus:0, attribution:{"Slack/Community":12,"Other":8,"Terra.do":3,"LinkedIn":2,"Direct referral":1,"Newsletter/CTVC":1,"Climate Week":1}, top_roles:[["pm",13],["consultant",4],["product manager",3]], signals:[] },
-  { name:"Speaker - Designing for Impact", type:"Speaker Series", date:"Aug 2025", month:"2025-08", registrations:77, attended:37, attendance_rate:48.1, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:55, returning_2_4:0, returning_5plus:0, attribution:{"Other":41,"Newsletter/CTVC":14,"Luma organic":8,"Direct referral":5,"Slack/Community":5,"LinkedIn":3,"Terra.do":1}, top_roles:[["pm",12],["consultant",3],["design",2]], signals:[] },
-  { name:"SGN - Sep 2025", type:"Small Group Networking", date:"Sep 2025", month:"2025-09", registrations:29, attended:17, attendance_rate:58.6, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:22, returning_2_4:0, returning_5plus:0, attribution:{"Other":11,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Terra.do":3,"LinkedIn":2,"Newsletter/CTVC":2}, top_roles:[["pm",7],["founder",2]], signals:[] },
-  { name:"SGN - Oct 2025 (Virtual/SDCW)", type:"Small Group Networking", date:"Oct 2025", month:"2025-10", registrations:83, attended:38, attendance_rate:45.8, avg_rating:4.0, catalyst_yes:0, catalyst_rate:null, first_timers:58, returning_2_4:18, returning_5plus:2, attribution:{"Other":19,"Climate Week":14,"LinkedIn":4,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Newsletter/CTVC":3,"Women in Product":1}, top_roles:[["pm",14],["consultant",8],["founder",4]], signals:[] },
-  { name:"Workshop - Ideate Design Build", type:"Workshop", date:"Oct 2025", month:"2025-10", registrations:10, attended:8, attendance_rate:80.0, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"Other":2,"Climate Week":2,"Partner orgs":1,"LinkedIn":1,"Direct referral":1}, top_roles:[["student",2],["educator",1]], signals:[] },
-  { name:"Snackable - Sustainable Compute", type:"Snackable Skills", date:"Nov 2025", month:"2025-11", registrations:49, attended:18, attendance_rate:36.7, avg_rating:4.3, catalyst_yes:9, catalyst_rate:18.4, catalyst_wording:"Premium", first_timers:19, returning_2_4:3, returning_5plus:2, attribution:{"Other":23,"Luma organic":7,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":3,"Terra.do":2,"Climate Week":1}, top_roles:[["pm",7],["dev",2],["ceo",2]], signals:[{type:"flag",text:"Attendance 36.7% below 40% threshold."}] },
-  { name:"Speaker - Hollywood Storytelling", type:"Speaker Series", date:"Dec 2025", month:"2025-12", registrations:34, attended:17, attendance_rate:50.0, avg_rating:5.0, catalyst_yes:14, catalyst_rate:41.2, catalyst_wording:"Premium", first_timers:16, returning_2_4:13, returning_5plus:2, attribution:{"Other":11,"Luma organic":5,"LinkedIn":5,"Slack/Community":4,"Direct referral":4,"Climate Week":3}, top_roles:[["pm",10],["consultant",3],["founder",2]], signals:[{type:"watch",text:"41.2% used 'Premium Membership' wording  -  not comparable to Feb 2026+ baseline."}] },
-  { name:"SGN - Jan 2026", type:"Small Group Networking", date:"Jan 2026", month:"2026-01", registrations:71, attended:35, attendance_rate:49.3, avg_rating:5.0, catalyst_yes:26, catalyst_rate:36.6, catalyst_wording:"Premium", first_timers:37, returning_2_4:22, returning_5plus:7, attribution:{"Other":24,"Slack/Community":20,"Luma organic":9,"Terra.do":5,"Direct referral":5}, top_roles:[["pm",14],["consultant",7],["product manager",4]], signals:[{type:"watch",text:"36.6% used 'Premium Membership' wording  -  treat as directional."}] },
-  { name:"Snackable - Product Market Earth Fit", type:"Snackable Skills", date:"Feb 2026", month:"2026-02", registrations:78, attended:29, attendance_rate:37.2, avg_rating:5.0, catalyst_yes:13, catalyst_rate:16.7, catalyst_wording:"Catalyst", first_timers:40, returning_2_4:25, returning_5plus:7, attribution:{"Other":27,"Luma organic":13,"Direct referral":10,"LinkedIn":8,"Slack/Community":7,"Terra.do":6,"Newsletter/CTVC":2}, top_roles:[["pm",18],["consultant",9],["ceo",3]], signals:[{type:"flag",text:"Attendance 37.2% below 40% threshold."}] },
-  { name:"Speaker - Climate Conscious Convos", type:"Speaker Series", date:"Mar 2026", month:"2026-03", registrations:81, attended:38, attendance_rate:46.9, avg_rating:4.7, catalyst_yes:13, catalyst_rate:16.0, catalyst_wording:"Catalyst", first_timers:39, returning_2_4:28, returning_5plus:6, attribution:{"Other":24,"Luma organic":17,"LinkedIn":7,"Direct referral":6,"Newsletter/CTVC":4,"Terra.do":4,"Climate Week":2,"Slack/Community":2}, top_roles:[["pm",11],["consultant",5],["design",4]], signals:[] },
-  { name:"SGN - Q2 2026 (Apr)", type:"Small Group Networking", date:"Apr 2026", month:"2026-04", registrations:105, attended:45, attendance_rate:42.9, avg_rating:4.6, catalyst_yes:26, catalyst_rate:24.8, catalyst_wording:"Catalyst", first_timers:77, returning_2_4:22, returning_5plus:6, attribution:{"Climate Week":47,"Other":19,"Luma organic":10,"Women in Product":8,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":5,"Terra.do":4,"Direct referral":3}, top_roles:[["pm",15],["consultant",14],["founder",7]], signals:[{type:"watch",text:"Attendance 42.9%  -  watch as registrations scale."},{type:"positive",text:"Climate Week drove 45% of regs  -  Q3 partner critical."}] },
-  { name:"Snackable - Growth without the Footprint", type:"Snackable Skills", date:"May 2026", month:"2026-05", registrations:62, attended:30, attendance_rate:48.4, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:26, returning_2_4:20, returning_5plus:6, attribution:{"Other":21,"CCL email/existing":20,"Climate Week":6,"Newsletter/CTVC":5,"Luma organic":3,"Slack/Community":2,"Direct referral":2,"Terra.do":1,"LinkedIn":1}, top_roles:[["pm",12],["founder/ceo",11],["dev",5],["consultant",5]], signals:[{type:"positive",text:"Attendance 48.4%  -  best Snackable rate yet."},{type:"watch",text:"No Catalyst question on this form."},{type:"flag",text:"Registrations -20.5% vs Feb 2026 Snackable."}] },
-  { name:"Speaker - Charging Forward (EVs & V2G)", type:"Speaker Series", date:"Jun 2026", month:"2026-06", registrations:139, attended:66, attendance_rate:47.5, avg_rating:5.0, catalyst_yes:32, catalyst_rate:23.0, catalyst_wording:"Catalyst", first_timers:107, returning_2_4:28, returning_5plus:4, attribution:{"Climate Week":44,"Direct referral":16,"Luma organic":10,"Slack/Community":9,"LinkedIn":8,"Newsletter/CTVC":5,"Women in Product":5}, top_roles:[["pm",21],["consultant",18],["product manager",3],["design",2],["student",2]], signals:[{type:"positive",text:"Registrations 139  -  largest Speaker Series ever, +72% vs Mar 2026."},{type:"positive",text:"Catalyst intent 23.0%  -  best ever for Speaker Series."},{type:"positive",text:"Toronto Climate Week drove 32% of regs  -  new partnership channel."},{type:"watch",text:"Attendance 47.5%  -  in watch zone. Highest raw count (66) yet."}] }
-];
-
-// ===== MONTHLY VIEW =====
-function renderMonthly() {
-  const month = document.getElementById('month-select').value;
-  const events = ALL_EVENTS.filter(e => e.month === month);
-  const container = document.getElementById('monthly-content');
-
-  if (events.length === 0) {
-    container.innerHTML = '<div class="card" style="color:var(--text-muted)">No events found for this month.</div>';
-    return;
-  }
-
-  let html = '';
-  events.forEach(evt => {
-    const typeClass = evt.type === 'Small Group Networking' ? 'sgn' : evt.type === 'Speaker Series' ? 'speaker' : evt.type === 'Snackable Skills' ? 'snackable' : 'workshop';
-    const attColor = evt.attendance_rate >= 60 ? 'var(--accent)' : evt.attendance_rate >= 40 ? 'var(--warn)' : 'var(--flag)';
-    const satColor = evt.avg_rating ? (evt.avg_rating >= 4.5 ? 'var(--accent)' : evt.avg_rating >= 4.0 ? 'var(--warn)' : 'var(--flag)') : 'var(--text-dim)';
-
-    html += `
-    <div class="flex-between" style="margin-bottom:12px">
-      <div>
-        <div class="event-name-big">${evt.name}</div>
-        <div class="event-meta">${evt.date}</div>
-      </div>
-      <span class="type-pill ${typeClass}">${evt.type}</span>
-    </div>
-    <div class="kpi-grid" style="margin-bottom:16px">
-      <div class="kpi blue">
-        <div class="kpi-label">Registrations</div>
-        <div class="kpi-value">${evt.registrations}</div>
-      </div>
-      <div class="kpi" style="--kpi-color:${attColor}">
-        <div class="kpi-label">Attendance Rate</div>
-        <div class="kpi-value" style="color:${attColor}">${evt.attendance_rate.toFixed(1)}%</div>
-        <div class="kpi-sub">${evt.attended} attended</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Satisfaction</div>
-        <div class="kpi-value" style="color:${satColor}">${evt.avg_rating ? evt.avg_rating.toFixed(1) : ' - '}</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Catalyst Intent</div>
-        <div class="kpi-value" style="color:${evt.catalyst_rate ? (evt.catalyst_rate >= 20 ? 'var(--accent)' : 'var(--warn)') : 'var(--text-dim)'}">${evt.catalyst_rate ? evt.catalyst_rate.toFixed(1) + '%' : ' - '}</div>
-        ${evt.catalyst_wording === 'Premium' ? '<div class="kpi-sub" style="color:var(--warn)">* Premium wording</div>' : ''}
-      </div>
-    </div>`;
-
-    if (Object.keys(evt.attribution).length > 0) {
-      const total = Object.values(evt.attribution).reduce((a,b) => a+b, 0);
-      const max = Math.max(...Object.values(evt.attribution));
-      html += `<div class="card" style="margin-bottom:16px">
-        <div class="card-title">Attribution</div>
-        <div class="bar-list">`;
-      Object.entries(evt.attribution).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => {
-        html += `<div class="bar-row">
-          <div class="bar-label">${k}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(0)}%;background:var(--accent)"></div></div>
-          <div class="bar-num">${v}</div>
-          <div class="bar-pct">${(v/total*100).toFixed(1)}%</div>
-        </div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    if (evt.signals.length > 0) {
-      html += `<div class="card" style="margin-bottom:24px">
-        <div class="card-title">Signals</div>
-        <div class="signals">`;
-      evt.signals.forEach(s => {
-        const icon = s.type === 'flag' ? '\u{1F6A9}' : s.type === 'watch' ? '\u26A0' : '\u2705';
-        html += `<div class="signal ${s.type}"><span class="signal-icon">${icon}</span>${s.text}</div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    html += '<hr>';
-  });
-
-  container.innerHTML = html;
-}
-
-// ===== CANVAS CHARTS =====
-const COLORS = {
-  accent: '#4ade80',
-  blue: '#60a5fa',
-  purple: '#a78bfa',
-  warn: '#facc15',
-  flag: '#f87171',
-  orange: '#fb923c',
-  dim: '#2a3a2b',
-  text: '#e8ede8',
-  muted: '#8a9e8b',
-  dimtxt: '#5a6e5b',
-};
-
-function drawLineChart(canvas, labels, datasets, opts = {}) {
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  const W = rect.width || canvas.parentElement.offsetWidth || 800;
-  const H = canvas.height * (W / (canvas.width || W));
-
-  canvas.width = W * dpr;
-  canvas.height = (opts.height || 200) * dpr;
-  canvas.style.width = W + 'px';
-  canvas.style.height = (opts.height || 200) + 'px';
-  ctx.scale(dpr, dpr);
-
-  const cW = W;
-  const cH = opts.height || 200;
-  const pad = { top: 20, right: 30, bottom: 40, left: 50 };
-  const plotW = cW - pad.left - pad.right;
-  const plotH = cH - pad.top - pad.bottom;
-
-  // Clear
-  ctx.clearRect(0, 0, cW, cH);
-
-  // Find range
-  let allVals = [];
-  datasets.forEach(d => allVals = allVals.concat(d.values.filter(v => v !== null)));
-  const minVal = opts.min !== undefined ? opts.min : Math.min(...allVals) * 0.85;
-  const maxVal = opts.max !== undefined ? opts.max : Math.max(...allVals) * 1.1;
-  const range = maxVal - minVal || 1;
-
-  const xStep = plotW / Math.max(labels.length - 1, 1);
-
-  function toX(i) { return pad.left + i * xStep; }
-  function toY(v) { return pad.top + plotH - ((v - minVal) / range) * plotH; }
-
-  // Grid lines
-  ctx.strokeStyle = '#2a3a2b';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.top + (plotH / 4) * i;
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(pad.left + plotW, y);
-    ctx.stroke();
-    const val = maxVal - (range / 4) * i;
-    ctx.fillStyle = COLORS.dimtxt;
-    ctx.font = '10px SF Mono, Fira Code, monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText(opts.formatter ? opts.formatter(val) : val.toFixed(0), pad.left - 6, y + 4);
-  }
-
-  // X labels
-  ctx.fillStyle = COLORS.dimtxt;
-  ctx.font = '10px SF Mono, Fira Code, monospace';
-  ctx.textAlign = 'center';
-  labels.forEach((lbl, i) => {
-    ctx.fillText(lbl, toX(i), cH - 8);
-  });
-
-  // Lines
-  datasets.forEach(ds => {
-    const pts = ds.values.map((v, i) => v !== null ? {x: toX(i), y: toY(v)} : null);
-    const valid = pts.filter(p => p !== null);
-    if (valid.length === 0) return;
-
-    // Gradient fill
-    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
-    grad.addColorStop(0, ds.color + '28');
-    grad.addColorStop(1, ds.color + '03');
-
-    ctx.beginPath();
-    let first = true;
-    pts.forEach((p, i) => {
-      if (!p) return;
-      if (first) { ctx.moveTo(p.x, p.y); first = false; }
-      else ctx.lineTo(p.x, p.y);
-    });
-    ctx.lineTo(toX(pts.length - 1), pad.top + plotH);
-    ctx.lineTo(toX(0), pad.top + plotH);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Line
-    ctx.beginPath();
-    first = true;
-    pts.forEach(p => {
-      if (!p) return;
-      if (first) { ctx.moveTo(p.x, p.y); first = false; }
-      else ctx.lineTo(p.x, p.y);
-    });
-    ctx.strokeStyle = ds.color;
-    ctx.lineWidth = 2;
-    ctx.lineJoin = 'round';
-    ctx.stroke();
-
-    // Dots
-    pts.forEach((p, i) => {
-      if (!p) return;
-      const isLast = i === pts.length - 1 && ds.values[i] !== null;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, isLast ? 5 : 3, 0, Math.PI * 2);
-      ctx.fillStyle = isLast ? ds.color : ds.color + 'bb';
-      ctx.fill();
-      if (isLast) {
-        // Star label
-        ctx.fillStyle = COLORS.warn;
-        ctx.font = '11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('\u2605', p.x, p.y - 10);
-        ctx.fillStyle = ds.color;
-        ctx.font = '10px SF Mono, Fira Code, monospace';
-        ctx.fillText(opts.formatter ? opts.formatter(ds.values[i]) : ds.values[i].toFixed(0), p.x, p.y - 20);
-      }
-    });
-  });
-
-  // Threshold line
-  if (opts.threshold !== undefined) {
-    const ty = toY(opts.threshold);
-    ctx.beginPath();
-    ctx.setLineDash([4, 4]);
-    ctx.moveTo(pad.left, ty);
-    ctx.lineTo(pad.left + plotW, ty);
-    ctx.strokeStyle = COLORS.flag + '80';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = COLORS.flag + '80';
-    ctx.font = '9px SF Mono, Fira Code, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(opts.thresholdLabel || opts.threshold, pad.left + 4, ty - 3);
-  }
-}
-
-// SGN data
-const sgnEvents = ALL_EVENTS.filter(e => e.type === 'Small Group Networking');
-let sgnRange = 6;
-
-function getSGNSlice() {
-  const all = sgnEvents;
-  return sgnRange === 'all' ? all : all.slice(-sgnRange);
-}
-
-function initSGNCharts() { renderSGNCharts(); }
-
-function setSGNRange(r) {
-  sgnRange = r;
-  document.getElementById('sgn-btn-6').classList.toggle('active', r === 6);
-  document.getElementById('sgn-btn-all').classList.toggle('active', r === 'all');
-  renderSGNCharts();
-}
-
-function renderSGNCharts() {
-  const slice = getSGNSlice();
-  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
-  drawLineChart(document.getElementById('sgn-regs-chart'), labels, [{color: COLORS.blue, values: slice.map(e => e.registrations)}], {height:200, min:0});
-  drawLineChart(document.getElementById('sgn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
-  const satVals = slice.map(e => e.avg_rating);
-  drawLineChart(document.getElementById('sgn-sat-chart'), labels, [{color: COLORS.purple, values: satVals}], {height:200, min:3.5, max:5.5, formatter: v => v.toFixed(1)});
-}
-
-// Speaker data
-const spEvents = ALL_EVENTS.filter(e => e.type === 'Speaker Series');
-let spRange = 6;
-
-function initSPCharts() { renderSPCharts(); }
-
-function setSPRange(r) {
-  spRange = r;
-  document.getElementById('sp-btn-6').classList.toggle('active', r === 6);
-  document.getElementById('sp-btn-all').classList.toggle('active', r === 'all');
-  renderSPCharts();
-}
-
-function renderSPCharts() {
-  const slice = spRange === 'all' ? spEvents : spEvents.slice(-spRange);
-  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
-  drawLineChart(document.getElementById('sp-regs-chart'), labels, [{color: COLORS.purple, values: slice.map(e => e.registrations)}], {height:200, min:0});
-  drawLineChart(document.getElementById('sp-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
-  const satVals = slice.map(e => e.avg_rating);
-  drawLineChart(document.getElementById('sp-sat-chart'), labels, [{color: COLORS.warn, values: satVals}], {height:200, min:3.5, max:5.5, formatter: v => v === null ? ' - ' : v.toFixed(1)});
-}
-
-// Snackable data
-const snEvents = ALL_EVENTS.filter(e => e.type === 'Snackable Skills');
-
-function initSNCharts() { renderSNCharts(); }
-function setSNRange(r) { renderSNCharts(); }
-
-function renderSNCharts() {
-  const slice = snEvents;
-  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
-  drawLineChart(document.getElementById('sn-regs-chart'), labels, [{color: COLORS.orange, values: slice.map(e => e.registrations)}], {height:200, min:0});
-  drawLineChart(document.getElementById('sn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
-  drawLineChart(document.getElementById('sn-sat-chart'), labels, [{color: COLORS.warn, values: slice.map(e => e.avg_rating)}], {height:200, min:3.5, max:5.5, formatter: v => v === null ? ' - ' : v.toFixed(1)});
-}
-
-// Redraw charts on resize
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    if (window.sgnInited) renderSGNCharts();
-    if (window.spInited) renderSPCharts();
-    if (window.snInited) renderSNCharts();
-  }, 150);
+// build tabs
+var tabsEl=document.getElementById('tabs'),panelsEl=document.getElementById('panels');
+TABS.forEach(function(name,i){
+  var t=el('div','tab'+(i===0?' active':''),name);t.onclick=function(){select(i);};tabsEl.appendChild(t);
+  var p=el('div','panel'+(i===0?' active':''));p.id='panel-'+i;panelsEl.appendChild(p);
 });
+function select(i){
+  var ts=tabsEl.children,ps=panelsEl.children;
+  for(var k=0;k<ts.length;k++){ts[k].classList.toggle('active',k===i);ps[k].classList.toggle('active',k===i);}
+  if(i===2)drawTrend('Small Group Networking','panel-2');
+  if(i===3)drawTrend('Speaker Series','panel-3');
+  if(i===4)drawTrend('Snackable Skills','panel-4');
+}
 
-// Init monthly
-renderMonthly();
+document.getElementById('hdr-sub').textContent=EV.length+' events tracked  |  '+EV[0].date+' \u2013 '+EV[EV.length-1].date+'  |  updated '+(DB.pipeline.last_updated||'');
+
+// ---------- Latest Event ----------
+function attrRows(e){
+  var entries=Object.keys(e.attribution||{}).map(function(k){return [k,e.attribution[k]];}).sort(function(a,b){return b[1]-a[1];});
+  var tot=entries.reduce(function(s,x){return s+x[1];},0)||1;
+  return entries.map(function(x){return '<div class="row"><span>'+x[0]+'</span><span>'+x[1]+' <span class="muted">('+(x[1]/tot*100).toFixed(0)+'%)</span></span></div>';}).join('');
+}
+function roleRows(e){return (e.top_roles||[]).map(function(r){return '<div class="row"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>';}).join('');}
+function sigBlocks(e){return (e.signals||[]).map(function(s){return '<div class="sig '+s.type+'">'+s.text+'</div>';}).join('')||'<p class="muted">No signals flagged.</p>';}
+
+function latestPanel(){
+  var e=EV[EV.length-1],p=document.getElementById('panel-0');
+  var totRet=(e.first_timers+e.returning_2_4+e.returning_5plus)||1;
+  p.innerHTML=
+  '<h2>'+e.name+' &nbsp;<span class="muted" style="font-size:13px">'+e.type+' \u00b7 '+e.date+'</span></h2>'+
+  '<div class="grid kpis">'+
+    kpi('Registrations',e.registrations,'of '+e.total_invites+' invited')+
+    kpi('Attendance',pct(e.attendance_rate),e.attended+' attended')+
+    kpi('Satisfaction',e.avg_rating!=null?e.avg_rating.toFixed(2):'-',(e.rating_responses||0)+' ratings')+
+    kpi('Catalyst Intent',pct(e.catalyst_rate),(e.catalyst_yes||0)+' said yes')+
+  '</div>'+
+  '<h2>Funnel</h2><div class="funnel">'+
+    fstep('Invited',e.total_invites,100)+
+    fstep('Registered',e.registrations,e.registrations/e.total_invites*100)+
+    fstep('Attended',e.attended,e.attended/e.total_invites*100)+
+  '</div>'+
+  '<div class="grid two" style="margin-top:20px">'+
+    '<div class="card"><h3>Retention Mix</h3>'+
+      retRow('First-timers',e.first_timers,totRet)+retRow('Returning 2\u20134',e.returning_2_4,totRet)+retRow('Loyalists 5+',e.returning_5plus,totRet)+'</div>'+
+    '<div class="card"><h3>Top Roles</h3>'+roleRows(e)+'</div>'+
+  '</div>'+
+  '<div class="grid two" style="margin-top:16px">'+
+    '<div class="card"><h3>Attribution</h3>'+attrRows(e)+'</div>'+
+    '<div class="card"><h3>Signals</h3>'+sigBlocks(e)+'</div>'+
+  '</div>';
+}
+function kpi(l,v,s){return '<div class="card kpi"><div class="lbl">'+l+'</div><div class="val">'+v+'</div><div class="sub">'+s+'</div></div>';}
+function fstep(t,n,w){return '<div class="fstep"><div class="n">'+n+'</div><div class="t">'+t+'</div><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i></div></div>';}
+function retRow(l,n,tot){var w=(n/tot*100);return '<div class="row"><span>'+l+'</span><span>'+n+' <span class="muted">('+w.toFixed(0)+'%)</span></span></div><div class="bar" style="margin-bottom:8px"><i style="width:'+w.toFixed(0)+'%"></i></div>';}
+
+// ---------- Monthly View ----------
+function monthlyPanel(){
+  var p=document.getElementById('panel-1');
+  var months=[];EV.forEach(function(e){if(months.indexOf(e.month)<0)months.push(e.month);});
+  var sel=el('select');months.slice().reverse().forEach(function(m){var o=el('option');o.value=m;o.textContent=EV.filter(function(e){return e.month===m;})[0].date;sel.appendChild(o);});
+  var out=el('div');out.style.marginTop='16px';
+  function render(m){
+    var evs=EV.filter(function(e){return e.month===m;});
+    out.innerHTML=evs.map(function(e){
+      return '<div class="card" style="margin-bottom:14px"><h2 style="margin-top:0">'+e.name+'</h2>'+
+      '<div class="grid kpis">'+kpi('Regs',e.registrations,'of '+e.total_invites)+kpi('Attendance',pct(e.attendance_rate),e.attended+' came')+
+      kpi('Satisfaction',e.avg_rating!=null?e.avg_rating.toFixed(2):'-',(e.rating_responses||0)+' ratings')+kpi('Catalyst',pct(e.catalyst_rate),(e.catalyst_yes||0)+' yes')+'</div>'+
+      '<div style="margin-top:12px">'+sigBlocks(e)+'</div></div>';
+    }).join('');
+  }
+  sel.onchange=function(){render(sel.value);};
+  p.appendChild(el('h2',null,'Monthly View'));p.appendChild(sel);p.appendChild(out);render(months[months.length-1]);
+}
+
+// ---------- Trend charts ----------
+var showAll={};
+function drawTrend(type,pid){
+  var p=document.getElementById(pid);
+  var evs=EV.filter(function(e){return e.type===type;});
+  p.innerHTML='';
+  p.appendChild(el('h2',null,type+' Trend'));
+  var all=!!showAll[type];
+  var data=all?evs:evs.slice(-6);
+  var btn=el('button','btn',all?'Show last 6':'Show all events');
+  btn.onclick=function(){showAll[type]=!all;drawTrend(type,pid);};
+  p.appendChild(btn);
+  [['Registrations','registrations',false],['Attendance rate','attendance_rate',true],['Satisfaction','avg_rating',false]].forEach(function(m){
+    var w=el('div','chartwrap');w.appendChild(el('h3',null,m[0]));
+    var cv=el('canvas');cv.height=200;w.appendChild(cv);p.appendChild(w);
+    lineChart(cv,data.map(function(e){return e.date;}),data.map(function(e){return e[m[1]];}),m[2]);
+  });
+  if(!data.length)p.appendChild(el('p','muted','No events of this type yet.'));
+}
+function lineChart(cv,labels,vals,isPct){
+  var ctx=cv.getContext('2d');var W=cv.width=cv.offsetWidth*2;var H=cv.height=400;ctx.scale(1,1);
+  var pad=44,pr=2;ctx.clearRect(0,0,W,H);
+  var clean=vals.map(function(v){return v==null?null:v;});
+  var mx=Math.max.apply(null,clean.filter(function(v){return v!=null;}).concat([1]));
+  var mn=0;var span=mx-mn||1;
+  var gx=function(i){return pad+(W-pad*1.4-pad)*(labels.length<2?0.5:i/(labels.length-1));};
+  var gy=function(v){return H-pad-(H-pad*1.6)*((v-mn)/span);};
+  ctx.strokeStyle='#e2e8e5';ctx.lineWidth=1;ctx.fillStyle='#5c6b63';ctx.font='20px sans-serif';
+  for(var g=0;g<=4;g++){var yv=mn+span*g/4;var y=gy(yv);ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad*0.4,y);ctx.stroke();ctx.fillText((isPct?yv.toFixed(0)+'%':yv.toFixed(1)),4,y+6);}
+  ctx.strokeStyle='#1a7a4c';ctx.lineWidth=3;ctx.beginPath();var started=false;
+  clean.forEach(function(v,i){if(v==null)return;var x=gx(i),y=gy(v);if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);});
+  ctx.stroke();
+  clean.forEach(function(v,i){if(v==null)return;var x=gx(i),y=gy(v);var last=(i===clean.length-1);
+    ctx.fillStyle='#1a7a4c';ctx.beginPath();ctx.arc(x,y,last?9:5,0,7);ctx.fill();
+    if(last){ctx.fillStyle='#b7791f';ctx.font='24px sans-serif';ctx.fillText('\u2605',x-10,y-14);}
+    ctx.fillStyle='#1a2b23';ctx.font='20px sans-serif';ctx.textAlign='center';ctx.fillText(isPct?v.toFixed(0)+'%':v,x,y-16);ctx.textAlign='left';
+  });
+  ctx.fillStyle='#5c6b63';ctx.font='18px sans-serif';ctx.textAlign='center';
+  labels.forEach(function(l,i){ctx.fillText(l,gx(i),H-14);});ctx.textAlign='left';
+}
+
+// ---------- Benchmarks ----------
+function benchPanel(){
+  var p=document.getElementById('panel-5');var b=DB.benchmarks;
+  var rows=TYPES.map(function(t){var d=b[t]||{};return '<tr><td><b>'+t+'</b></td><td class="n">'+num(d.events)+'</td><td class="n">'+num(d.avg_regs)+'</td><td class="n">'+pct(d.avg_att_rate)+'</td><td class="n">'+(d.avg_satisfaction!=null?d.avg_satisfaction:'-')+'</td><td class="n">'+(d.avg_catalyst_pct!=null?pct(d.avg_catalyst_pct):'-')+'</td></tr>';}).join('');
+  p.innerHTML='<h2>Type Benchmarks</h2><div class="card"><table><thead><tr><th>Event Type</th><th class="n">Events</th><th class="n">Avg Regs</th><th class="n">Avg Attendance</th><th class="n">Avg Satisfaction</th><th class="n">Avg Catalyst</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '<h2>Community Pipeline</h2><div class="grid kpis">'+
+   kpi('Unique People',DB.pipeline.total_unique_people,'across all events')+
+   kpi('Unique Attendees',DB.pipeline.unique_attended,'ever attended')+
+   kpi('Ever Said Yes',DB.pipeline.ever_said_yes,'Catalyst interest')+
+   kpi('Reg Return Rate',pct(DB.retention.return_rate_registered_pct),DB.retention.returned_registered_count+' returned')+
+   kpi('Loyalists 3+',DB.retention.loyalists_3plus,'attended 3+ events')+
+  '</div><p class="muted" style="margin-top:10px">'+(DB.pipeline.notes||'')+'</p>';
+}
+
+// ---------- All Events ----------
+function allPanel(){
+  var p=document.getElementById('panel-6');
+  var rows=EV.slice().reverse().map(function(e){
+    var sp=(e.signals||[]).map(function(s){return '<span class="pill '+s.type+'">'+s.type+'</span>';}).join('');
+    return '<tr><td>'+e.date+'</td><td>'+e.name+'</td><td>'+e.type+'</td><td class="n">'+e.registrations+'</td><td class="n">'+pct(e.attendance_rate)+'</td><td class="n">'+(e.avg_rating!=null?e.avg_rating.toFixed(1):'-')+'</td><td class="n">'+pct(e.catalyst_rate)+'</td><td>'+sp+'</td></tr>';
+  }).join('');
+  p.innerHTML='<h2>All Events</h2><div class="card"><table><thead><tr><th>Date</th><th>Event</th><th>Type</th><th class="n">Regs</th><th class="n">Att</th><th class="n">Sat</th><th class="n">Cat</th><th>Signals</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+latestPanel();monthlyPanel();benchPanel();allPanel();
+window.addEventListener('resize',function(){var a=document.querySelector('.panel.active');if(a){var id=a.id;if(id==='panel-2')drawTrend('Small Group Networking',id);if(id==='panel-3')drawTrend('Speaker Series',id);if(id==='panel-4')drawTrend('Snackable Skills',id);}});
 </script>
 </body>
 </html>
