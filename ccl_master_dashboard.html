@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCL Event Analytics — Climate Conscious Leaders</title>
+<style>
+  :root {
+    --bg: #0f1410;
+    --surface: #161c17;
+    --surface-2: #1d261e;
+    --border: #2a3a2b;
+    --border-light: #3a4e3b;
+    --text: #e8ede8;
+    --text-muted: #8a9e8b;
+    --text-dim: #5a6e5b;
+    --accent: #4ade80;
+    --accent-dim: #1a3a24;
+    --accent-mid: #22c55e;
+    --warn: #facc15;
+    --warn-dim: #3a3000;
+    --flag: #f87171;
+    --flag-dim: #3a1010;
+    --blue: #60a5fa;
+    --blue-dim: #1a2a3a;
+    --purple: #a78bfa;
+    --orange: #fb923c;
+    --font-mono: 'SF Mono', 'Fira Code', monospace;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --radius: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .header-sep { width: 1px; height: 20px; background: var(--border); }
+  .header-subtitle {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+  .header-updated {
+    margin-left: auto;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+
+  /* TABS */
+  .tabs {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 18px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* CONTENT */
+  .tab-content { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); }
+  .kpi.green .kpi-value { color: var(--accent); }
+  .kpi.yellow .kpi-value { color: var(--warn); }
+  .kpi.red .kpi-value { color: var(--flag); }
+  .kpi.blue .kpi-value { color: var(--blue); }
+  .kpi.purple .kpi-value { color: var(--purple); }
+
+  /* TWO-COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 900px) { .three-col { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .three-col { grid-template-columns: 1fr; } }
+
+  /* FUNNEL */
+  .funnel { display: flex; flex-direction: column; gap: 8px; }
+  .funnel-row { display: flex; align-items: center; gap: 12px; }
+  .funnel-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); width: 90px; flex-shrink: 0; }
+  .funnel-bar-wrap { flex: 1; background: var(--surface-2); border-radius: 2px; height: 20px; overflow: hidden; }
+  .funnel-bar { height: 100%; border-radius: 2px; transition: width 0.5s; }
+  .funnel-num { font-family: var(--font-mono); font-size: 12px; color: var(--text); width: 55px; text-align: right; }
+  .funnel-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); width: 42px; text-align: right; }
+
+  /* BARS - attribution, roles */
+  .bar-list { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 12px; color: var(--text-muted); width: 120px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: var(--surface-2); border-radius: 2px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); width: 30px; text-align: right; }
+  .bar-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); width: 38px; text-align: right; }
+
+  /* RETENTION PIE (text version) */
+  .retention-pie { display: flex; gap: 12px; flex-wrap: wrap; }
+  .ret-seg {
+    flex: 1; min-width: 100px;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .ret-seg-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .ret-seg-label { font-size: 11px; color: var(--text-muted); }
+
+  /* SIGNALS */
+  .signals { display: flex; flex-direction: column; gap: 8px; }
+  .signal {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .signal.flag { background: var(--flag-dim); border: 1px solid #5a2020; color: #fca5a5; }
+  .signal.watch { background: var(--warn-dim); border: 1px solid #5a4500; color: #fde68a; }
+  .signal.positive { background: var(--accent-dim); border: 1px solid #1a5a30; color: #86efac; }
+  .signal-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  /* EVENT TABLE */
+  .event-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .event-table th {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .event-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text-muted);
+  }
+  .event-table tr:last-child td { border-bottom: none; }
+  .event-table tr:hover td { background: var(--surface-2); }
+  .event-table td.name { color: var(--text); font-weight: 500; }
+  .event-table td.num { font-family: var(--font-mono); color: var(--text); }
+  .event-table td.green { font-family: var(--font-mono); color: var(--accent); }
+  .event-table td.yellow { font-family: var(--font-mono); color: var(--warn); }
+  .event-table td.red { font-family: var(--font-mono); color: var(--flag); }
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 3px;
+    margin-bottom: 2px;
+  }
+  .badge.flag { background: var(--flag-dim); color: var(--flag); border: 1px solid #5a2020; }
+  .badge.watch { background: var(--warn-dim); color: var(--warn); border: 1px solid #5a4500; }
+  .badge.positive { background: var(--accent-dim); color: var(--accent); border: 1px solid #1a5a30; }
+
+  /* TYPE PILL */
+  .type-pill {
+    display: inline-block;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .type-pill.sgn { background: #1a2a3a; color: var(--blue); border: 1px solid #1e3a5f; }
+  .type-pill.speaker { background: #2a1a3a; color: var(--purple); border: 1px solid #3a1e5f; }
+  .type-pill.snackable { background: #2a1a10; color: var(--orange); border: 1px solid #5a3010; }
+  .type-pill.workshop { background: var(--accent-dim); color: var(--accent); border: 1px solid #1a5a30; }
+
+  /* CANVAS CHART */
+  .chart-wrap { position: relative; margin-bottom: 8px; }
+  canvas { display: block; width: 100%; }
+  .chart-controls { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .chart-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chart-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .chart-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* BENCHMARK TABLE */
+  .bench-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 800px) { .bench-grid { grid-template-columns: repeat(2, 1fr); } }
+  .bench-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .bench-type { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .bench-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .bench-label { font-size: 12px; color: var(--text-muted); }
+  .bench-val { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+
+  /* PIPELINE */
+  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .pipeline-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pipeline-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .pipeline-card.tier1::before { background: var(--accent); }
+  .pipeline-card.tier2::before { background: var(--blue); }
+  .pipeline-card.tier3::before { background: var(--purple); }
+  .pipeline-card.tier4::before { background: var(--warn); }
+  .pipeline-num { font-family: var(--font-mono); font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .pipeline-label { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .pipeline-note { font-size: 10px; color: var(--text-dim); margin-top: 6px; font-family: var(--font-mono); }
+
+  /* MONTHLY VIEW */
+  .month-select-wrap { margin-bottom: 20px; }
+  select {
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    outline: none;
+  }
+  select:focus { border-color: var(--accent); }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    margin-top: 24px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* CUMULATIVE CHART */
+  .cumul-bar-list { display: flex; flex-direction: column; gap: 10px; }
+  .cumul-row { display: flex; align-items: center; gap: 12px; }
+  .cumul-label { font-size: 11px; color: var(--text-muted); width: 220px; flex-shrink: 0; }
+  .cumul-track { flex: 1; background: var(--surface-2); border-radius: 2px; height: 18px; overflow: hidden; }
+  .cumul-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+  .cumul-num { font-family: var(--font-mono); font-size: 12px; color: var(--text); width: 40px; text-align: right; }
+  .cumul-wording { font-family: var(--font-mono); font-size: 10px; width: 60px; text-align: right; }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  /* MISC */
+  .text-green { color: var(--accent); }
+  .text-yellow { color: var(--warn); }
+  .text-red { color: var(--flag); }
+  .text-muted { color: var(--text-muted); }
+  .text-dim { color: var(--text-dim); }
+  .mono { font-family: var(--font-mono); }
+  .star { color: var(--warn); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .event-name-big { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .event-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">CCL // Analytics</div>
+  <div class="header-sep"></div>
+  <div class="header-subtitle">Climate Conscious Leaders</div>
+  <div class="header-updated">Updated Sep 2026 · 18 events</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('latest', this)">Latest Event</button>
+  <button class="tab" onclick="showTab('monthly', this)">Monthly View</button>
+  <button class="tab" onclick="showTab('sgn-trend', this)">SGN Trend</button>
+  <button class="tab" onclick="showTab('speaker-trend', this)">Speaker Trend</button>
+  <button class="tab" onclick="showTab('snackable-trend', this)">Snackable Trend</button>
+  <button class="tab" onclick="showTab('benchmarks', this)">Type Benchmarks</button>
+  <button class="tab" onclick="showTab('all-events', this)">All Events</button>
+</div>
+
+<!-- ===== TAB: LATEST EVENT ===== -->
+<div id="tab-latest" class="tab-content active">
+  <div class="flex-between" style="margin-bottom:20px">
+    <div>
+      <div class="event-name-big">PRODUCT-MARKET-EARTH FIT Masterclass: Rewiring User Habits (NYCW) <span class="star">★</span></div>
+      <div class="event-meta">Workshop · Sep 2026 · Most recent event · Virtual session at NYC Climate Week</div>
+    </div>
+    <div class="type-pill workshop">Workshop</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi green">
+      <div class="kpi-label">Registrations</div>
+      <div class="kpi-value">13</div>
+      <div class="kpi-sub">+30.0% vs Oct 2025 Workshop (10)</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Attendance Rate</div>
+      <div class="kpi-value">61.5%</div>
+      <div class="kpi-sub">8 of 13 attended</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Satisfaction</div>
+      <div class="kpi-value">5.0</div>
+      <div class="kpi-sub">2 responses</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Catalyst Intent</div>
+      <div class="kpi-value" style="color:var(--text-dim)">—</div>
+      <div class="kpi-sub">Not asked on this form</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Registration Funnel</div>
+      <div class="funnel">
+        <div class="funnel-row">
+          <div class="funnel-label">Invited</div>
+          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%;background:var(--border-light)"></div></div>
+          <div class="funnel-num">511</div>
+          <div class="funnel-pct">100%</div>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">Registered</div>
+          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:2.5%;background:var(--blue)"></div></div>
+          <div class="funnel-num">13</div>
+          <div class="funnel-pct">2.5%</div>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">Attended</div>
+          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:1.6%;background:var(--accent)"></div></div>
+          <div class="funnel-num">8</div>
+          <div class="funnel-pct">61.5%</div>
+        </div>
+        <div class="funnel-row">
+          <div class="funnel-label">Catalyst Yes</div>
+          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:0%;background:var(--purple)"></div></div>
+          <div class="funnel-num">—</div>
+          <div class="funnel-pct">n/a</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Retention Breakdown</div>
+      <div class="retention-pie" style="margin-bottom:14px">
+        <div class="ret-seg">
+          <div class="ret-seg-val" style="color:var(--blue)">38%</div>
+          <div class="ret-seg-label">New to CCL<br><span class="mono" style="font-size:11px">5 people</span></div>
+        </div>
+        <div class="ret-seg">
+          <div class="ret-seg-val" style="color:var(--accent)">62%</div>
+          <div class="ret-seg-label">Registered for an earlier CCL event<br><span class="mono" style="font-size:11px">8 people</span></div>
+        </div>
+      </div>
+      <div class="signal watch"><span class="signal-icon">⚠</span> The NYCW form had no meetup-history question, so this split comes from email dedupe against all prior CCL guest lists instead of the usual first / 2–4 / 5+ buckets. Mostly existing community — NYCW added 5 new people.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Attribution — How They Heard About CCL</div>
+      <div class="bar-list">
+        <div class="bar-row">
+          <div class="bar-label">CCL email/existing</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
+          <div class="bar-num">3</div>
+          <div class="bar-pct">42.9%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Direct referral</div>
+          <div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--blue)"></div></div>
+          <div class="bar-num">2</div>
+          <div class="bar-pct">28.6%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Women in Product</div>
+          <div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--purple)"></div></div>
+          <div class="bar-num">1</div>
+          <div class="bar-pct">14.3%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Climate Week</div>
+          <div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--orange)"></div></div>
+          <div class="bar-num">1</div>
+          <div class="bar-pct">14.3%</div>
+        </div>
+      </div>
+      <div class="pipeline-note" style="margin-top:10px">Based on 7 of 13 who answered the invite question</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Top Roles</div>
+      <div class="bar-list">
+        <div class="bar-row">
+          <div class="bar-label">PM</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
+          <div class="bar-num">4</div>
+          <div class="bar-pct">30.8%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Founder/CEO</div>
+          <div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--blue)"></div></div>
+          <div class="bar-num">3</div>
+          <div class="bar-pct">23.1%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Consultant</div>
+          <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--purple)"></div></div>
+          <div class="bar-num">2</div>
+          <div class="bar-pct">15.4%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Marketing/Bizdev</div>
+          <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--orange)"></div></div>
+          <div class="bar-num">1</div>
+          <div class="bar-pct">7.7%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Dev</div>
+          <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--warn)"></div></div>
+          <div class="bar-num">1</div>
+          <div class="bar-pct">7.7%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Signals &amp; Flags</div>
+    <div class="signals">
+      <div class="signal positive"><span class="signal-icon">✅</span> Registrations 13 — up 30% vs Oct 2025 Workshop (10).</div>
+      <div class="signal positive"><span class="signal-icon">✅</span> Attendance 61.5% (8 of 13) and satisfaction 5.0 (2 responses) — Workshop stays the quality anchor.</div>
+      <div class="signal positive"><span class="signal-icon">✅</span> NYC Climate Week partnership: 3 regs came via the NYCW event guide, plus 1 Women in Product coupon — small n, directional only.</div>
+      <div class="signal watch"><span class="signal-icon">⚠</span> No Catalyst or meetup-history question on this form — pipeline and retention buckets not updated from this event.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Also this month</div>
+  <div class="card">
+    <div class="card-title">Speaker – Design Essentials · Sep 2026</div>
+    <div class="kpi-grid" style="margin-bottom:0">
+      <div class="kpi red"><div class="kpi-label">Registrations</div><div class="kpi-value">80</div><div class="kpi-sub">-42.4% vs Jun 2026 (139)</div></div>
+      <div class="kpi yellow"><div class="kpi-label">Attendance Rate</div><div class="kpi-value">51.2%</div><div class="kpi-sub">41 of 80 · best Speaker yet</div></div>
+      <div class="kpi green"><div class="kpi-label">Satisfaction</div><div class="kpi-value">4.5</div><div class="kpi-sub">6 responses</div></div>
+      <div class="kpi red"><div class="kpi-label">Catalyst Intent</div><div class="kpi-value">12.5%</div><div class="kpi-sub">10 of 80 · 30.3% of 33 who answered</div></div>
+    </div>
+    <div class="pipeline-note" style="margin-top:10px">Full detail and signals in Monthly View → Sep 2026</div>
+  </div>
+</div>
+
+<!-- ===== TAB: MONTHLY VIEW ===== -->
+<div id="tab-monthly" class="tab-content">
+  <div class="month-select-wrap">
+    <select id="month-select" onchange="renderMonthly()">
+      <option value="2025-06">Jun 2025</option>
+      <option value="2025-07">Jul 2025</option>
+      <option value="2025-08">Aug 2025</option>
+      <option value="2025-09">Sep 2025</option>
+      <option value="2025-10">Oct 2025</option>
+      <option value="2025-11">Nov 2025</option>
+      <option value="2025-12">Dec 2025</option>
+      <option value="2026-01">Jan 2026</option>
+      <option value="2026-02">Feb 2026</option>
+      <option value="2026-03">Mar 2026</option>
+      <option value="2026-04">Apr 2026</option>
+      <option value="2026-05">May 2026</option>
+      <option value="2026-06">Jun 2026</option>
+      <option value="2026-07">Jul 2026</option>
+      <option value="2026-08">Aug 2026</option>
+      <option value="2026-09" selected>Sep 2026</option>
+    </select>
+  </div>
+  <div id="monthly-content"></div>
+</div>
+
+<!-- ===== TAB: SGN TREND ===== -->
+<div id="tab-sgn-trend" class="tab-content">
+  <div class="card-title" style="margin-bottom:16px">Small Group Networking — Trend Analysis</div>
+  <div class="chart-controls">
+    <button class="chart-btn active" id="sgn-btn-6" onclick="setSGNRange(6)">Last 6</button>
+    <button class="chart-btn" id="sgn-btn-all" onclick="setSGNRange('all')">All Time</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrations</div>
+    <div class="chart-wrap"><canvas id="sgn-regs-chart" height="200"></canvas></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Attendance Rate</div>
+      <div class="chart-wrap"><canvas id="sgn-att-chart" height="200"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Satisfaction Score</div>
+      <div class="chart-wrap"><canvas id="sgn-sat-chart" height="200"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB: SPEAKER TREND ===== -->
+<div id="tab-speaker-trend" class="tab-content">
+  <div class="card-title" style="margin-bottom:16px">Speaker Series — Trend Analysis</div>
+  <div class="chart-controls">
+    <button class="chart-btn active" id="sp-btn-6" onclick="setSPRange(6)">Last 6</button>
+    <button class="chart-btn" id="sp-btn-all" onclick="setSPRange('all')">All Time</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrations</div>
+    <div class="chart-wrap"><canvas id="sp-regs-chart" height="200"></canvas></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Attendance Rate</div>
+      <div class="chart-wrap"><canvas id="sp-att-chart" height="200"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Satisfaction Score</div>
+      <div class="chart-wrap"><canvas id="sp-sat-chart" height="200"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB: SNACKABLE TREND ===== -->
+<div id="tab-snackable-trend" class="tab-content">
+  <div class="card-title" style="margin-bottom:16px">Snackable Skills — Trend Analysis</div>
+  <div class="chart-controls">
+    <button class="chart-btn active" id="sn-btn-all" onclick="setSNRange('all')">All Time</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Registrations</div>
+    <div class="chart-wrap"><canvas id="sn-regs-chart" height="200"></canvas></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Attendance Rate</div>
+      <div class="chart-wrap"><canvas id="sn-att-chart" height="200"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Satisfaction Score</div>
+      <div class="chart-wrap"><canvas id="sn-sat-chart" height="200"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB: BENCHMARKS ===== -->
+<div id="tab-benchmarks" class="tab-content">
+  <div class="card-title" style="margin-bottom:16px">Type Benchmarks — All Event Types Side by Side</div>
+
+  <div class="section-label">Community Retention Metrics</div>
+  <div class="pipeline-grid" style="margin-bottom:16px">
+    <div class="pipeline-card tier1">
+      <div class="pipeline-num" style="color:var(--accent)">625</div>
+      <div class="pipeline-label">Total unique people ever registered</div>
+      <div class="pipeline-note">Deduped by email · Sep 2025 CSV n/a</div>
+    </div>
+    <div class="pipeline-card tier2">
+      <div class="pipeline-num" style="color:var(--blue)">344</div>
+      <div class="pipeline-label">Unique people who attended at least once</div>
+      <div class="pipeline-note">55.0% of all registered</div>
+    </div>
+    <div class="pipeline-card tier3">
+      <div class="pipeline-num" style="color:var(--accent)">37.8%</div>
+      <div class="pipeline-label">Return rate (registered in 2+ events)</div>
+      <div class="pipeline-note">236 of 625 · Healthy range: 20–40%</div>
+    </div>
+    <div class="pipeline-card tier4">
+      <div class="pipeline-num" style="color:var(--purple)">47</div>
+      <div class="pipeline-label">Loyalists — attended 3+ events</div>
+      <div class="pipeline-note">Core community anchors</div>
+    </div>
+  </div>
+
+  <div class="section-label">Catalyst Membership Pipeline</div>
+  <div class="pipeline-grid" style="margin-bottom:16px">
+    <div class="pipeline-card tier1">
+      <div class="pipeline-num" style="color:var(--accent)">154</div>
+      <div class="pipeline-label">Unique people ever expressing Catalyst interest</div>
+      <div class="pipeline-note">Any "yes" across all events · fully deduped</div>
+    </div>
+    <div class="pipeline-card tier2">
+      <div class="pipeline-num" style="color:var(--blue)">25</div>
+      <div class="pipeline-label">High-intent — said yes at 2+ events</div>
+      <div class="pipeline-note">Strongest pipeline signal</div>
+    </div>
+    <div class="pipeline-card tier3">
+      <div class="pipeline-num" style="color:var(--accent)">121</div>
+      <div class="pipeline-label">Reliable pipeline (Feb 2026+ "Catalyst" wording)</div>
+      <div class="pipeline-note">Comparable baseline from Feb 2026</div>
+    </div>
+    <div class="pipeline-card tier4">
+      <div class="pipeline-num" style="color:var(--purple)">+12</div>
+      <div class="pipeline-label">New unique Catalyst yeses since Jul 2026</div>
+      <div class="pipeline-note">Aug Snackable +6 · Sep Speaker +6 · Sep Workshop had no question</div>
+    </div>
+  </div>
+
+  <div class="section-label">Event Type Averages</div>
+  <div class="bench-grid">
+    <div class="bench-card">
+      <div class="bench-type" style="color:var(--blue)">SGN</div>
+      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">6</div></div>
+      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">75</div></div>
+      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">48.6%</div></div>
+      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.5</div></div>
+      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">29.6%</div></div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-type" style="color:var(--purple)">Speaker Series</div>
+      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">6</div></div>
+      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">77</div></div>
+      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">48.6%</div></div>
+      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.7</div></div>
+      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">17.2%</div></div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-type" style="color:var(--orange)">Snackable Skills</div>
+      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">4</div></div>
+      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">68</div></div>
+      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--warn)">43.4%</div></div>
+      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">4.6</div></div>
+      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--purple)">16.3%</div></div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-type" style="color:var(--accent)">Workshop</div>
+      <div class="bench-row"><div class="bench-label">Events tracked</div><div class="bench-val">2</div></div>
+      <div class="bench-row"><div class="bench-label">Avg registrations</div><div class="bench-val" style="color:var(--accent)">12</div></div>
+      <div class="bench-row"><div class="bench-label">Avg attendance rate</div><div class="bench-val" style="color:var(--accent)">70.8%</div></div>
+      <div class="bench-row"><div class="bench-label">Avg satisfaction</div><div class="bench-val" style="color:var(--accent)">5.0</div></div>
+      <div class="bench-row"><div class="bench-label">Avg Catalyst intent</div><div class="bench-val" style="color:var(--text-dim)">—</div></div>
+    </div>
+  </div>
+  <div style="margin-top:10px;font-size:11px;color:var(--text-dim);font-family:var(--font-mono)">
+    Avg Catalyst intent uses Feb 2026+ "Catalyst"-wording events only (reliable baseline). Premium-wording events (Nov 2025–Jan 2026) excluded.
+  </div>
+</div>
+
+<!-- ===== TAB: ALL EVENTS ===== -->
+<div id="tab-all-events" class="tab-content">
+  <div class="card-title" style="margin-bottom:16px">All Events — Chronological · 18 total</div>
+  <div style="overflow-x:auto">
+  <table class="event-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Event</th>
+        <th>Type</th>
+        <th>Regs</th>
+        <th>Attended</th>
+        <th>Att Rate</th>
+        <th>Satisfaction</th>
+        <th>Catalyst</th>
+        <th>Signals</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono text-dim">Jun 2025</td>
+        <td class="name">Speaker – PM Guest Talk</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">50</td>
+        <td class="num">24</td>
+        <td class="yellow">48.0%</td>
+        <td class="text-dim">—</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Jul 2025</td>
+        <td class="name">SGN – Jul 2025</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">49</td>
+        <td class="num">25</td>
+        <td class="yellow">51.0%</td>
+        <td class="green">4.5</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Aug 2025</td>
+        <td class="name">Speaker – Designing for Impact</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">77</td>
+        <td class="num">37</td>
+        <td class="yellow">48.1%</td>
+        <td class="green">4.5</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Sep 2025</td>
+        <td class="name">SGN – Sep 2025</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">29</td>
+        <td class="num">17</td>
+        <td class="green">58.6%</td>
+        <td class="text-dim">—</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Oct 2025</td>
+        <td class="name">SGN – Oct 2025 (Virtual/SDCW)</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">83</td>
+        <td class="num">38</td>
+        <td class="yellow">45.8%</td>
+        <td class="green">4.0</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Oct 2025</td>
+        <td class="name">Workshop – Ideate Design Build</td>
+        <td><span class="type-pill workshop">Workshop</span></td>
+        <td class="num">10</td>
+        <td class="num">8</td>
+        <td class="green">80.0%</td>
+        <td class="green">5.0</td>
+        <td class="text-dim">—</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Nov 2025</td>
+        <td class="name">Snackable – Sustainable Compute</td>
+        <td><span class="type-pill snackable">Snackable</span></td>
+        <td class="num">49</td>
+        <td class="num">18</td>
+        <td class="red">36.7%</td>
+        <td class="green">4.3</td>
+        <td class="yellow">18.4%*</td>
+        <td><span class="badge flag">flag</span><span class="badge positive">✅</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Dec 2025</td>
+        <td class="name">Speaker – Hollywood Storytelling</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">34</td>
+        <td class="num">17</td>
+        <td class="yellow">50.0%</td>
+        <td class="green">5.0</td>
+        <td class="yellow">41.2%*</td>
+        <td><span class="badge watch">watch</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Jan 2026</td>
+        <td class="name">SGN – Jan 2026</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">71</td>
+        <td class="num">35</td>
+        <td class="yellow">49.3%</td>
+        <td class="green">5.0</td>
+        <td class="yellow">36.6%*</td>
+        <td><span class="badge watch">watch</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Feb 2026</td>
+        <td class="name">Snackable – Product Market Earth Fit</td>
+        <td><span class="type-pill snackable">Snackable</span></td>
+        <td class="num">78</td>
+        <td class="num">29</td>
+        <td class="red">37.2%</td>
+        <td class="green">5.0</td>
+        <td class="yellow">16.7%</td>
+        <td><span class="badge flag">flag</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Mar 2026</td>
+        <td class="name">Speaker – Climate Conscious Convos</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">81</td>
+        <td class="num">38</td>
+        <td class="yellow">46.9%</td>
+        <td class="green">4.7</td>
+        <td class="yellow">16.0%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Apr 2026</td>
+        <td class="name">SGN – Q2 2026 (Apr)</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">105</td>
+        <td class="num">45</td>
+        <td class="yellow">42.9%</td>
+        <td class="green">4.6</td>
+        <td class="green">24.8%</td>
+        <td><span class="badge watch">watch</span><span class="badge positive">✅</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">May 2026</td>
+        <td class="name">Snackable – Growth without the Footprint</td>
+        <td><span class="type-pill snackable">Snackable</span></td>
+        <td class="num">62</td>
+        <td class="num">30</td>
+        <td class="yellow">48.4%</td>
+        <td class="green">5.0</td>
+        <td class="text-dim">—</td>
+        <td><span class="badge positive">✅</span><span class="badge watch">watch</span><span class="badge flag">flag</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Jun 2026</td>
+        <td class="name">Speaker – Charging Forward (EVs &amp; V2G)</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">139</td>
+        <td class="num">66</td>
+        <td class="yellow">47.5%</td>
+        <td class="green">5.0</td>
+        <td class="green">23.0%</td>
+        <td><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Jul 2026</td>
+        <td class="name">SGN – Q3 2026 (Climate Conscious Tech People)</td>
+        <td><span class="type-pill sgn">SGN</span></td>
+        <td class="num">113</td>
+        <td class="num">50</td>
+        <td class="yellow">44.2%</td>
+        <td class="green">4.3</td>
+        <td class="green">34.5%</td>
+        <td><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Aug 2026</td>
+        <td class="name">Snackable – Using AI Sustainably</td>
+        <td><span class="type-pill snackable">Snackable</span></td>
+        <td class="num">82</td>
+        <td class="num">42</td>
+        <td class="yellow">51.2%</td>
+        <td class="green">4.3</td>
+        <td class="yellow">15.9%</td>
+        <td><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
+      </tr>
+      <tr>
+        <td class="mono text-dim">Sep 2026</td>
+        <td class="name">Speaker – Design Essentials</td>
+        <td><span class="type-pill speaker">Speaker</span></td>
+        <td class="num">80</td>
+        <td class="num">41</td>
+        <td class="yellow">51.2%</td>
+        <td class="green">4.5</td>
+        <td class="red">12.5%†</td>
+        <td><span class="badge flag">flag</span><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
+      </tr>
+      <tr style="background:rgba(74,222,128,0.04)">
+        <td class="mono" style="color:var(--accent)">Sep 2026 ★</td>
+        <td class="name" style="color:var(--accent)">Workshop – PMEF Masterclass (NYCW)</td>
+        <td><span class="type-pill workshop">Workshop</span></td>
+        <td class="num" style="color:var(--accent)">13</td>
+        <td class="num" style="color:var(--accent)">8</td>
+        <td class="green">61.5%</td>
+        <td class="green">5.0</td>
+        <td class="text-dim">—</td>
+        <td><span class="badge positive">✅</span><span class="badge watch">watch</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="margin-top:10px;font-size:11px;color:var(--text-dim);font-family:var(--font-mono)">
+    * Nov 2025, Dec 2025, Jan 2026 used "Premium Membership" wording — higher rates not directly comparable to Feb 2026+ Catalyst baseline.<br>
+    † Sep 2026 Speaker: 47 of 80 registrants were bulk-added without form answers — Catalyst % uses all 80 registrants as denominator (30.3% of the 33 who answered).
+  </div>
+</div>
+
+<script>
+// ===== TAB SWITCHING =====
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Always render charts when tab is shown (handles resize/first-load)
+  if (id === 'sgn-trend') { initSGNCharts(); window.sgnInited = true; }
+  if (id === 'speaker-trend') { initSPCharts(); window.spInited = true; }
+  if (id === 'snackable-trend') { initSNCharts(); window.snInited = true; }
+  if (id === 'monthly') { renderMonthly(); window.monthlyInited = true; }
+}
+
+// ===== DATA =====
+const ALL_EVENTS = [
+  { name:"Speaker - PM Guest Talk", type:"Speaker Series", date:"Jun 2025", month:"2025-06", registrations:50, attended:24, attendance_rate:48.0, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{}, top_roles:[], signals:[] },
+  { name:"SGN - Jul 2025", type:"Small Group Networking", date:"Jul 2025", month:"2025-07", registrations:49, attended:25, attendance_rate:51.0, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:37, returning_2_4:12, returning_5plus:0, attribution:{"Slack/Community":12,"Other":8,"Terra.do":3,"LinkedIn":2,"Direct referral":1,"Newsletter/CTVC":1,"Climate Week":1}, top_roles:[["pm",13],["consultant",4],["product manager",3],["engineer",1],["founder",1]], signals:[] },
+  { name:"Speaker - Designing for Impact", type:"Speaker Series", date:"Aug 2025", month:"2025-08", registrations:77, attended:37, attendance_rate:48.1, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:55, returning_2_4:0, returning_5plus:0, attribution:{"Other":41,"Newsletter/CTVC":14,"Luma organic":8,"Direct referral":5,"Slack/Community":5,"LinkedIn":3,"Terra.do":1}, top_roles:[["pm",12],["consultant",3],["design",2],["student",2]], signals:[] },
+  { name:"SGN - Sep 2025", type:"Small Group Networking", date:"Sep 2025", month:"2025-09", registrations:29, attended:17, attendance_rate:58.6, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:22, returning_2_4:0, returning_5plus:0, attribution:{"Other":11,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Terra.do":3,"LinkedIn":2,"Newsletter/CTVC":2}, top_roles:[["pm",7],["founder",2],["cpto",1]], signals:[] },
+  { name:"SGN - Oct 2025 (Virtual/SDCW)", type:"Small Group Networking", date:"Oct 2025", month:"2025-10", registrations:83, attended:38, attendance_rate:45.8, avg_rating:4.0, catalyst_yes:0, catalyst_rate:null, first_timers:58, returning_2_4:18, returning_5plus:2, attribution:{"Other":19,"Climate Week":14,"LinkedIn":4,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Newsletter/CTVC":3,"Women in Product":1}, top_roles:[["pm",14],["consultant",8],["founder",4],["ceo",2]], signals:[] },
+  { name:"Workshop - Ideate Design Build", type:"Workshop", date:"Oct 2025", month:"2025-10", registrations:10, attended:8, attendance_rate:80.0, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"Other":2,"Climate Week":2,"Partner orgs":1,"LinkedIn":1,"Direct referral":1}, top_roles:[["student",2],["educator",1],["founder",1]], signals:[] },
+  { name:"Snackable - Sustainable Compute", type:"Snackable Skills", date:"Nov 2025", month:"2025-11", registrations:49, attended:18, attendance_rate:36.7, avg_rating:4.3, catalyst_yes:9, catalyst_rate:18.4, catalyst_wording:"Premium", first_timers:19, returning_2_4:3, returning_5plus:2, attribution:{"Other":23,"Luma organic":7,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":3,"Terra.do":2,"Climate Week":1}, top_roles:[["pm",7],["dev",2],["ceo",2]], signals:[{type:"flag",text:"Attendance 36.7% below 40% threshold."},{type:"positive",text:"Satisfaction 4.3 held despite low attendance  -  content not the issue."}] },
+  { name:"Speaker - Hollywood Storytelling", type:"Speaker Series", date:"Dec 2025", month:"2025-12", registrations:34, attended:17, attendance_rate:50.0, avg_rating:5.0, catalyst_yes:14, catalyst_rate:41.2, catalyst_wording:"Premium", first_timers:16, returning_2_4:13, returning_5plus:2, attribution:{"Other":11,"Luma organic":5,"LinkedIn":5,"Slack/Community":4,"Direct referral":4,"Climate Week":3}, top_roles:[["pm",10],["consultant",3],["founder",2]], signals:[{type:"watch",text:"41.2% used 'Premium Membership' wording  -  not comparable to Feb 2026+ baseline."}] },
+  { name:"SGN - Jan 2026", type:"Small Group Networking", date:"Jan 2026", month:"2026-01", registrations:71, attended:35, attendance_rate:49.3, avg_rating:5.0, catalyst_yes:26, catalyst_rate:36.6, catalyst_wording:"Premium", first_timers:37, returning_2_4:22, returning_5plus:7, attribution:{"Other":24,"Slack/Community":20,"Luma organic":9,"Terra.do":5,"Direct referral":5}, top_roles:[["pm",14],["consultant",7],["product manager",4],["design",3],["founder",3]], signals:[{type:"watch",text:"36.6% used 'Premium Membership' wording  -  treat as directional."}] },
+  { name:"Snackable - Product Market Earth Fit", type:"Snackable Skills", date:"Feb 2026", month:"2026-02", registrations:78, attended:29, attendance_rate:37.2, avg_rating:5.0, catalyst_yes:13, catalyst_rate:16.7, catalyst_wording:"Catalyst", first_timers:40, returning_2_4:25, returning_5plus:7, attribution:{"Other":27,"Luma organic":13,"Direct referral":10,"LinkedIn":8,"Slack/Community":7,"Terra.do":6,"Newsletter/CTVC":2}, top_roles:[["pm",18],["consultant",9],["ceo",3],["design",3]], signals:[{type:"flag",text:"Attendance 37.2% below 40% threshold."}] },
+  { name:"Speaker - Climate Conscious Convos", type:"Speaker Series", date:"Mar 2026", month:"2026-03", registrations:81, attended:38, attendance_rate:46.9, avg_rating:4.7, catalyst_yes:13, catalyst_rate:16.0, catalyst_wording:"Catalyst", first_timers:39, returning_2_4:28, returning_5plus:6, attribution:{"Other":24,"Luma organic":17,"LinkedIn":7,"Direct referral":6,"Newsletter/CTVC":4,"Terra.do":4,"Climate Week":2,"Slack/Community":2}, top_roles:[["pm",11],["consultant",5],["design",4],["product manager",3],["founder",2]], signals:[] },
+  { name:"SGN - Q2 2026 (Apr)", type:"Small Group Networking", date:"Apr 2026", month:"2026-04", registrations:105, attended:45, attendance_rate:42.9, avg_rating:4.6, catalyst_yes:26, catalyst_rate:24.8, catalyst_wording:"Catalyst", first_timers:77, returning_2_4:22, returning_5plus:6, attribution:{"Climate Week":47,"Other":19,"Luma organic":10,"Women in Product":8,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":5,"Terra.do":4,"Direct referral":3}, top_roles:[["pm",15],["consultant",14],["founder",7],["ceo",3],["design",3]], signals:[{type:"watch",text:"Attendance 42.9%  -  watch as registrations scale."},{type:"positive",text:"Climate Week drove 45% of regs  -  Q3 partner critical."}] },
+  { name:"Snackable - Growth without the Footprint", type:"Snackable Skills", date:"May 2026", month:"2026-05", registrations:62, attended:30, attendance_rate:48.4, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:26, returning_2_4:20, returning_5plus:6, attribution:{"Other":21,"CCL email/existing":20,"Climate Week":6,"Newsletter/CTVC":5,"Luma organic":3,"Slack/Community":2,"Direct referral":2,"Terra.do":1,"LinkedIn":1}, top_roles:[["pm",12],["founder/ceo",11],["dev",5],["consultant",5],["design",2]], signals:[{type:"positive",text:"Attendance 48.4%  -  best Snackable rate yet, up from 36-37%."},{type:"watch",text:"No Catalyst question on this form  -  pipeline data unavailable."},{type:"flag",text:"Registrations -20.5% vs Feb 2026 Snackable (62 vs 78). Watch trend."}] },
+  { name:"Speaker - Charging Forward (EVs & V2G)", type:"Speaker Series", date:"Jun 2026", month:"2026-06", registrations:139, attended:66, attendance_rate:47.5, avg_rating:5.0, catalyst_yes:32, catalyst_rate:23.0, catalyst_wording:"Catalyst", first_timers:107, returning_2_4:28, returning_5plus:4, attribution:{"Climate Week":44,"Direct referral":16,"Luma organic":10,"Slack/Community":9,"LinkedIn":8,"Newsletter/CTVC":5,"Women in Product":5}, top_roles:[["pm",21],["consultant",18],["product manager",3],["design",2],["student",2]], signals:[{type:"positive",text:"Registrations 139  -  largest Speaker Series ever, up 72% vs Mar 2026 (81)."},{type:"positive",text:"Catalyst intent 23.0%  -  best ever for Speaker Series, up from 16%."},{type:"positive",text:"Climate Week drove 32% of regs  -  Toronto Climate Week a strong new partnership channel."},{type:"watch",text:"Attendance 47.5%  -  in watch range. Highest raw attended count (66) for Speaker Series yet."}] },
+  { name:"SGN - Q3 2026 (Climate Conscious Tech People)", type:"Small Group Networking", date:"Jul 2026", month:"2026-07", registrations:113, attended:50, attendance_rate:44.2, avg_rating:4.3, catalyst_yes:39, catalyst_rate:34.5, catalyst_wording:"Catalyst", first_timers:91, returning_2_4:18, returning_5plus:4, attribution:{"Other":42,"Climate Week":19,"Luma organic":18,"Direct referral":15,"LinkedIn":6,"Slack/Community":4,"Partner orgs":3,"Newsletter/CTVC":2,"Terra.do":1}, top_roles:[["pm",19],["consultant",9],["student",5],["dev",4],["analyst",3],["ceo",3]], signals:[{type:"positive",text:"Registrations 113  -  up 7.6% vs Apr 2026 SGN (105). Sustained growth."},{type:"positive",text:"Catalyst intent 34.5%  -  well above 25% SGN baseline; strongest reliable-wording SGN yet. Plus 5 existing Catalyst members re-registered."},{type:"watch",text:"Attendance 44.2%  -  in watch range (&lt;50%). Consistent with SGN scaling pattern."},{type:"watch",text:"Climate Week (PNW/PwC) drove 17% of attributed regs  -  partner channel dependency continues."}] },
+  { name:"Snackable - Using AI Sustainably", type:"Snackable Skills", date:"Aug 2026", month:"2026-08", registrations:82, attended:42, attendance_rate:51.2, avg_rating:4.3, catalyst_yes:13, catalyst_rate:15.9, catalyst_wording:"Catalyst", first_timers:43, returning_2_4:23, returning_5plus:5, attribution:{"CCL email/existing":30,"Other":10,"Luma organic":8,"Slack/Community":8,"Newsletter/CTVC":6,"Direct referral":4,"Climate Week":4,"Partner orgs":3,"LinkedIn":3,"Terra.do":2}, top_roles:[["pm",15],["consultant",11],["founder/ceo",9],["dev",8],["design",6],["researcher",5]], signals:[{type:"positive",text:"Registrations 82  -  up 32.3% vs May 2026 Snackable (62). Largest Snackable yet (prev high 78)."},{type:"positive",text:"Attendance 51.2%  -  best Snackable rate yet and first above 50% (May 48.4%, Feb 37.2%)."},{type:"watch",text:"Satisfaction 4.3 (4.29, 7 responses)  -  lowest Snackable score so far; above the 4.0 floor but in the 4.0-4.3 watch band."},{type:"watch",text:"Catalyst intent 15.9% (13 of 82)  -  in the 15-20% watch band. 3 existing Catalyst members also registered."},{type:"watch",text:"Slack/Community rose to 10.3% of attributed regs (8 of 78, from 2 in May)  -  new channel above 10%."}] },
+  { name:"Speaker - Design Essentials", type:"Speaker Series", date:"Sep 2026", month:"2026-09", registrations:80, attended:41, attendance_rate:51.2, avg_rating:4.5, catalyst_yes:10, catalyst_rate:12.5, catalyst_wording:"Catalyst", first_timers:24, returning_2_4:7, returning_5plus:2, attribution:{"CCL email/existing":14,"Luma organic":6,"Newsletter/CTVC":2,"Slack/Community":2,"Other":2,"Terra.do":1,"LinkedIn":1,"Partner orgs":1,"Direct referral":1}, top_roles:[["design",5],["consultant",5],["researcher",4],["sustainability",3],["dev",3],["pm",2]], signals:[{type:"flag",text:"Registrations 80  -  down 42.4% vs Jun 2026 Speaker (139). Jun was boosted by Toronto Climate Week; 80 is in line with Mar 2026 (81)."},{type:"flag",text:"Catalyst intent 12.5% (10 of 80) below 15%. Caveat: 47 registrants were bulk-added without the form, so only 33 saw the question  -  30.3% of those said yes."},{type:"positive",text:"Attendance 51.2%  -  best Speaker Series rate yet (prev high 50.0%, Dec 2025)."},{type:"positive",text:"Satisfaction 4.5 (6 responses)  -  stable vs Speaker benchmark."},{type:"watch",text:"47 of 80 registrants (59%) have no form answers  -  retention, attribution and roles reflect only the 33 who answered."}] },
+  { name:"Workshop - PMEF Masterclass (NYCW)", type:"Workshop", date:"Sep 2026", month:"2026-09", registrations:13, attended:8, attendance_rate:61.5, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"CCL email/existing":3,"Direct referral":2,"Women in Product":1,"Climate Week":1}, top_roles:[["pm",4],["founder/ceo",3],["consultant",2],["marketing/bizdev",1],["dev",1]], signals:[{type:"positive",text:"Registrations 13  -  up 30% vs Oct 2025 Workshop (10)."},{type:"positive",text:"Attendance 61.5% (8 of 13) and satisfaction 5.0 (2 responses)  -  Workshop stays the quality anchor."},{type:"positive",text:"NYC Climate Week partnership: 3 regs came via the NYCW event guide, plus 1 Women in Product coupon  -  small n, directional only."},{type:"watch",text:"No Catalyst or meetup-history question on this form  -  pipeline and retention buckets not updated from this event."}] }
+];
+
+// ===== MONTHLY VIEW =====
+function renderMonthly() {
+  const month = document.getElementById('month-select').value;
+  const events = ALL_EVENTS.filter(e => e.month === month);
+  const container = document.getElementById('monthly-content');
+
+  if (events.length === 0) {
+    container.innerHTML = '<div class="card" style="color:var(--text-muted)">No events found for this month.</div>';
+    return;
+  }
+
+  let html = '';
+  events.forEach(evt => {
+    const typeClass = evt.type === 'Small Group Networking' ? 'sgn' : evt.type === 'Speaker Series' ? 'speaker' : evt.type === 'Snackable Skills' ? 'snackable' : 'workshop';
+    const attColor = evt.attendance_rate >= 60 ? 'var(--accent)' : evt.attendance_rate >= 40 ? 'var(--warn)' : 'var(--flag)';
+    const satColor = evt.avg_rating ? (evt.avg_rating >= 4.5 ? 'var(--accent)' : evt.avg_rating >= 4.0 ? 'var(--warn)' : 'var(--flag)') : 'var(--text-dim)';
+
+    html += `
+    <div class="flex-between" style="margin-bottom:12px">
+      <div>
+        <div class="event-name-big">${evt.name}</div>
+        <div class="event-meta">${evt.date}</div>
+      </div>
+      <span class="type-pill ${typeClass}">${evt.type}</span>
+    </div>
+    <div class="kpi-grid" style="margin-bottom:16px">
+      <div class="kpi blue">
+        <div class="kpi-label">Registrations</div>
+        <div class="kpi-value">${evt.registrations}</div>
+      </div>
+      <div class="kpi" style="--kpi-color:${attColor}">
+        <div class="kpi-label">Attendance Rate</div>
+        <div class="kpi-value" style="color:${attColor}">${evt.attendance_rate.toFixed(1)}%</div>
+        <div class="kpi-sub">${evt.attended} attended</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Satisfaction</div>
+        <div class="kpi-value" style="color:${satColor}">${evt.avg_rating ? evt.avg_rating.toFixed(1) : ' - '}</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Catalyst Intent</div>
+        <div class="kpi-value" style="color:${evt.catalyst_rate ? (evt.catalyst_rate >= 20 ? 'var(--accent)' : 'var(--warn)') : 'var(--text-dim)'}">${evt.catalyst_rate ? evt.catalyst_rate.toFixed(1) + '%' : ' - '}</div>
+        ${evt.catalyst_wording === 'Premium' ? '<div class="kpi-sub" style="color:var(--warn)">* Premium wording</div>' : ''}
+      </div>
+    </div>`;
+
+    if (Object.keys(evt.attribution).length > 0) {
+      const total = Object.values(evt.attribution).reduce((a,b) => a+b, 0);
+      const max = Math.max(...Object.values(evt.attribution));
+      html += `<div class="card" style="margin-bottom:16px">
+        <div class="card-title">Attribution</div>
+        <div class="bar-list">`;
+      Object.entries(evt.attribution).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => {
+        html += `<div class="bar-row">
+          <div class="bar-label">${k}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(0)}%;background:var(--accent)"></div></div>
+          <div class="bar-num">${v}</div>
+          <div class="bar-pct">${(v/total*100).toFixed(1)}%</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    if (evt.signals.length > 0) {
+      html += `<div class="card" style="margin-bottom:24px">
+        <div class="card-title">Signals</div>
+        <div class="signals">`;
+      evt.signals.forEach(s => {
+        const icon = s.type === 'flag' ? '\u{1F6A9}' : s.type === 'watch' ? '\u26A0' : '\u2705';
+        html += `<div class="signal ${s.type}"><span class="signal-icon">${icon}</span>${s.text}</div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    html += '<hr>';
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== CANVAS CHARTS =====
+const COLORS = {
+  accent: '#4ade80',
+  blue: '#60a5fa',
+  purple: '#a78bfa',
+  warn: '#facc15',
+  flag: '#f87171',
+  orange: '#fb923c',
+  dim: '#2a3a2b',
+  text: '#e8ede8',
+  muted: '#8a9e8b',
+  dimtxt: '#5a6e5b',
+};
+
+function drawLineChart(canvas, labels, datasets, opts = {}) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || canvas.parentElement.offsetWidth || 800;
+  const H = canvas.height * (W / (canvas.width || W));
+
+  canvas.width = W * dpr;
+  canvas.height = (opts.height || 200) * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = (opts.height || 200) + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cW = W;
+  const cH = opts.height || 200;
+  const pad = { top: 20, right: 30, bottom: 40, left: 50 };
+  const plotW = cW - pad.left - pad.right;
+  const plotH = cH - pad.top - pad.bottom;
+
+  // Clear
+  ctx.clearRect(0, 0, cW, cH);
+
+  // Find range
+  let allVals = [];
+  datasets.forEach(d => allVals = allVals.concat(d.values.filter(v => v !== null)));
+  const minVal = opts.min !== undefined ? opts.min : Math.min(...allVals) * 0.85;
+  const maxVal = opts.max !== undefined ? opts.max : Math.max(...allVals) * 1.1;
+  const range = maxVal - minVal || 1;
+
+  const xStep = plotW / Math.max(labels.length - 1, 1);
+
+  function toX(i) { return pad.left + i * xStep; }
+  function toY(v) { return pad.top + plotH - ((v - minVal) / range) * plotH; }
+
+  // Grid lines
+  ctx.strokeStyle = '#2a3a2b';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (plotH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + plotW, y);
+    ctx.stroke();
+    const val = maxVal - (range / 4) * i;
+    ctx.fillStyle = COLORS.dimtxt;
+    ctx.font = '10px SF Mono, Fira Code, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(opts.formatter ? opts.formatter(val) : val.toFixed(0), pad.left - 6, y + 4);
+  }
+
+  // X labels
+  ctx.fillStyle = COLORS.dimtxt;
+  ctx.font = '10px SF Mono, Fira Code, monospace';
+  ctx.textAlign = 'center';
+  labels.forEach((lbl, i) => {
+    ctx.fillText(lbl, toX(i), cH - 8);
+  });
+
+  // Lines
+  datasets.forEach(ds => {
+    const pts = ds.values.map((v, i) => v !== null ? {x: toX(i), y: toY(v)} : null);
+    const valid = pts.filter(p => p !== null);
+    if (valid.length === 0) return;
+
+    // Gradient fill
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+    grad.addColorStop(0, ds.color + '28');
+    grad.addColorStop(1, ds.color + '03');
+
+    ctx.beginPath();
+    let first = true;
+    pts.forEach((p, i) => {
+      if (!p) return;
+      if (first) { ctx.moveTo(p.x, p.y); first = false; }
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.lineTo(toX(pts.length - 1), pad.top + plotH);
+    ctx.lineTo(toX(0), pad.top + plotH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    first = true;
+    pts.forEach(p => {
+      if (!p) return;
+      if (first) { ctx.moveTo(p.x, p.y); first = false; }
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.strokeStyle = ds.color;
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Dots
+    pts.forEach((p, i) => {
+      if (!p) return;
+      const isLast = i === pts.length - 1 && ds.values[i] !== null;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isLast ? 5 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = isLast ? ds.color : ds.color + 'bb';
+      ctx.fill();
+      if (isLast) {
+        // Star label
+        ctx.fillStyle = COLORS.warn;
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('\u2605', p.x, p.y - 10);
+        ctx.fillStyle = ds.color;
+        ctx.font = '10px SF Mono, Fira Code, monospace';
+        ctx.fillText(opts.formatter ? opts.formatter(ds.values[i]) : ds.values[i].toFixed(0), p.x, p.y - 20);
+      }
+    });
+  });
+
+  // Threshold line
+  if (opts.threshold !== undefined) {
+    const ty = toY(opts.threshold);
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(pad.left, ty);
+    ctx.lineTo(pad.left + plotW, ty);
+    ctx.strokeStyle = COLORS.flag + '80';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = COLORS.flag + '80';
+    ctx.font = '9px SF Mono, Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(opts.thresholdLabel || opts.threshold, pad.left + 4, ty - 3);
+  }
+}
+
+// SGN data
+const sgnEvents = ALL_EVENTS.filter(e => e.type === 'Small Group Networking');
+let sgnRange = 6;
+
+function getSGNSlice() {
+  const all = sgnEvents;
+  return sgnRange === 'all' ? all : all.slice(-sgnRange);
+}
+
+function initSGNCharts() { renderSGNCharts(); }
+
+function setSGNRange(r) {
+  sgnRange = r;
+  document.getElementById('sgn-btn-6').classList.toggle('active', r === 6);
+  document.getElementById('sgn-btn-all').classList.toggle('active', r === 'all');
+  renderSGNCharts();
+}
+
+function renderSGNCharts() {
+  const slice = getSGNSlice();
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
+  drawLineChart(document.getElementById('sgn-regs-chart'), labels, [{color: COLORS.blue, values: slice.map(e => e.registrations)}], {height:200, min:0});
+  drawLineChart(document.getElementById('sgn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
+  const satVals = slice.map(e => e.avg_rating);
+  drawLineChart(document.getElementById('sgn-sat-chart'), labels, [{color: COLORS.purple, values: satVals}], {height:200, min:3.5, max:5.5, formatter: v => v.toFixed(1)});
+}
+
+// Speaker data
+const spEvents = ALL_EVENTS.filter(e => e.type === 'Speaker Series');
+let spRange = 6;
+
+function initSPCharts() { renderSPCharts(); }
+
+function setSPRange(r) {
+  spRange = r;
+  document.getElementById('sp-btn-6').classList.toggle('active', r === 6);
+  document.getElementById('sp-btn-all').classList.toggle('active', r === 'all');
+  renderSPCharts();
+}
+
+function renderSPCharts() {
+  const slice = spRange === 'all' ? spEvents : spEvents.slice(-spRange);
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
+  drawLineChart(document.getElementById('sp-regs-chart'), labels, [{color: COLORS.purple, values: slice.map(e => e.registrations)}], {height:200, min:0});
+  drawLineChart(document.getElementById('sp-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
+  const satVals = slice.map(e => e.avg_rating);
+  drawLineChart(document.getElementById('sp-sat-chart'), labels, [{color: COLORS.warn, values: satVals}], {height:200, min:3.5, max:5.5, formatter: v => v === null ? ' - ' : v.toFixed(1)});
+}
+
+// Snackable data
+const snEvents = ALL_EVENTS.filter(e => e.type === 'Snackable Skills');
+
+function initSNCharts() { renderSNCharts(); }
+function setSNRange(r) { renderSNCharts(); }
+
+function renderSNCharts() {
+  const slice = snEvents;
+  const labels = slice.map(e => e.date.replace("2025","'25").replace("2026","'26"));
+  drawLineChart(document.getElementById('sn-regs-chart'), labels, [{color: COLORS.orange, values: slice.map(e => e.registrations)}], {height:200, min:0});
+  drawLineChart(document.getElementById('sn-att-chart'), labels, [{color: COLORS.accent, values: slice.map(e => e.attendance_rate)}], {height:200, min:0, max:100, formatter: v => v.toFixed(0)+'%', threshold:40, thresholdLabel:'40%'});
+  drawLineChart(document.getElementById('sn-sat-chart'), labels, [{color: COLORS.warn, values: slice.map(e => e.avg_rating)}], {height:200, min:3.5, max:5.5, formatter: v => v === null ? ' - ' : v.toFixed(1)});
+}
+
+// Redraw charts on resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (window.sgnInited) renderSGNCharts();
+    if (window.spInited) renderSPCharts();
+    if (window.snInited) renderSNCharts();
+  }, 150);
+});
+
+// Init monthly
+renderMonthly();
+</script>
+</body>
+</html>
