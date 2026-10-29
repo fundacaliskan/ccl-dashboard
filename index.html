@@ -1091,106 +1091,222 @@ function showTab(id, btn) {
 
 // ===== DATA =====
 const ALL_EVENTS = [
-  { name:"Speaker - PM Guest Talk", type:"Speaker Series", date:"Jun 2025", month:"2025-06", registrations:50, attended:24, attendance_rate:48.0, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{}, top_roles:[], signals:[] },
-  { name:"SGN - Jul 2025", type:"Small Group Networking", date:"Jul 2025", month:"2025-07", registrations:49, attended:25, attendance_rate:51.0, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:37, returning_2_4:12, returning_5plus:0, attribution:{"Slack/Community":12,"Other":8,"Terra.do":3,"LinkedIn":2,"Direct referral":1,"Newsletter/CTVC":1,"Climate Week":1}, top_roles:[["pm",13],["consultant",4],["product manager",3],["engineer",1],["founder",1]], signals:[] },
-  { name:"Speaker - Designing for Impact", type:"Speaker Series", date:"Aug 2025", month:"2025-08", registrations:77, attended:37, attendance_rate:48.1, avg_rating:4.5, catalyst_yes:0, catalyst_rate:null, first_timers:55, returning_2_4:0, returning_5plus:0, attribution:{"Other":41,"Newsletter/CTVC":14,"Luma organic":8,"Direct referral":5,"Slack/Community":5,"LinkedIn":3,"Terra.do":1}, top_roles:[["pm",12],["consultant",3],["design",2],["student",2]], signals:[] },
-  { name:"SGN - Sep 2025", type:"Small Group Networking", date:"Sep 2025", month:"2025-09", registrations:29, attended:17, attendance_rate:58.6, avg_rating:null, catalyst_yes:0, catalyst_rate:null, first_timers:22, returning_2_4:0, returning_5plus:0, attribution:{"Other":11,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Terra.do":3,"LinkedIn":2,"Newsletter/CTVC":2}, top_roles:[["pm",7],["founder",2],["cpto",1]], signals:[] },
-  { name:"SGN - Oct 2025 (Virtual/SDCW)", type:"Small Group Networking", date:"Oct 2025", month:"2025-10", registrations:83, attended:38, attendance_rate:45.8, avg_rating:4.0, catalyst_yes:0, catalyst_rate:null, first_timers:58, returning_2_4:18, returning_5plus:2, attribution:{"Other":19,"Climate Week":14,"LinkedIn":4,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Newsletter/CTVC":3,"Women in Product":1}, top_roles:[["pm",14],["consultant",8],["founder",4],["ceo",2]], signals:[] },
-  { name:"Workshop - Ideate Design Build", type:"Workshop", date:"Oct 2025", month:"2025-10", registrations:10, attended:8, attendance_rate:80.0, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"Other":2,"Climate Week":2,"Partner orgs":1,"LinkedIn":1,"Direct referral":1}, top_roles:[["student",2],["educator",1],["founder",1]], signals:[] },
-  { name:"Snackable - Sustainable Compute", type:"Snackable Skills", date:"Nov 2025", month:"2025-11", registrations:49, attended:18, attendance_rate:36.7, avg_rating:4.3, catalyst_yes:9, catalyst_rate:18.4, catalyst_wording:"Premium", first_timers:19, returning_2_4:3, returning_5plus:2, attribution:{"Other":23,"Luma organic":7,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":3,"Terra.do":2,"Climate Week":1}, top_roles:[["pm",7],["dev",2],["ceo",2]], signals:[{type:"flag",text:"Attendance 36.7% below 40% threshold."},{type:"positive",text:"Satisfaction 4.3 held despite low attendance  -  content not the issue."}] },
-  { name:"Speaker - Hollywood Storytelling", type:"Speaker Series", date:"Dec 2025", month:"2025-12", registrations:34, attended:17, attendance_rate:50.0, avg_rating:5.0, catalyst_yes:14, catalyst_rate:41.2, catalyst_wording:"Premium", first_timers:16, returning_2_4:13, returning_5plus:2, attribution:{"Other":11,"Luma organic":5,"LinkedIn":5,"Slack/Community":4,"Direct referral":4,"Climate Week":3}, top_roles:[["pm",10],["consultant",3],["founder",2]], signals:[{type:"watch",text:"41.2% used 'Premium Membership' wording  -  not comparable to Feb 2026+ baseline."}] },
-  { name:"SGN - Jan 2026", type:"Small Group Networking", date:"Jan 2026", month:"2026-01", registrations:71, attended:35, attendance_rate:49.3, avg_rating:5.0, catalyst_yes:26, catalyst_rate:36.6, catalyst_wording:"Premium", first_timers:37, returning_2_4:22, returning_5plus:7, attribution:{"Other":24,"Slack/Community":20,"Luma organic":9,"Terra.do":5,"Direct referral":5}, top_roles:[["pm",14],["consultant",7],["product manager",4],["design",3],["founder",3]], signals:[{type:"watch",text:"36.6% used 'Premium Membership' wording  -  treat as directional."}] },
-  { name:"Snackable - Product Market Earth Fit", type:"Snackable Skills", date:"Feb 2026", month:"2026-02", registrations:78, attended:29, attendance_rate:37.2, avg_rating:5.0, catalyst_yes:13, catalyst_rate:16.7, catalyst_wording:"Catalyst", first_timers:40, returning_2_4:25, returning_5plus:7, attribution:{"Other":27,"Luma organic":13,"Direct referral":10,"LinkedIn":8,"Slack/Community":7,"Terra.do":6,"Newsletter/CTVC":2}, top_roles:[["pm",18],["consultant",9],["ceo",3],["design",3]], signals:[{type:"flag",text:"Attendance 37.2% below 40% threshold."}] },
-  { name:"Speaker - Climate Conscious Convos", type:"Speaker Series", date:"Mar 2026", month:"2026-03", registrations:81, attended:38, attendance_rate:46.9, avg_rating:4.7, catalyst_yes:13, catalyst_rate:16.0, catalyst_wording:"Catalyst", first_timers:39, returning_2_4:28, returning_5plus:6, attribution:{"Other":24,"Luma organic":17,"LinkedIn":7,"Direct referral":6,"Newsletter/CTVC":4,"Terra.do":4,"Climate Week":2,"Slack/Community":2}, top_roles:[["pm",11],["consultant",5],["design",4],["product manager",3],["founder",2]], signals:[] },
-  { name:"SGN - Q2 2026 (Apr)", type:"Small Group Networking", date:"Apr 2026", month:"2026-04", registrations:105, attended:45, attendance_rate:42.9, avg_rating:4.6, catalyst_yes:26, catalyst_rate:24.8, catalyst_wording:"Catalyst", first_timers:77, returning_2_4:22, returning_5plus:6, attribution:{"Climate Week":47,"Other":19,"Luma organic":10,"Women in Product":8,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":5,"Terra.do":4,"Direct referral":3}, top_roles:[["pm",15],["consultant",14],["founder",7],["ceo",3],["design",3]], signals:[{type:"watch",text:"Attendance 42.9%  -  watch as registrations scale."},{type:"positive",text:"Climate Week drove 45% of regs  -  Q3 partner critical."}] },
-  { name:"Snackable - Growth without the Footprint", type:"Snackable Skills", date:"May 2026", month:"2026-05", registrations:62, attended:30, attendance_rate:48.4, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:26, returning_2_4:20, returning_5plus:6, attribution:{"Other":21,"CCL email/existing":20,"Climate Week":6,"Newsletter/CTVC":5,"Luma organic":3,"Slack/Community":2,"Direct referral":2,"Terra.do":1,"LinkedIn":1}, top_roles:[["pm",12],["founder/ceo",11],["dev",5],["consultant",5],["design",2]], signals:[{type:"positive",text:"Attendance 48.4%  -  best Snackable rate yet, up from 36-37%."},{type:"watch",text:"No Catalyst question on this form  -  pipeline data unavailable."},{type:"flag",text:"Registrations -20.5% vs Feb 2026 Snackable (62 vs 78). Watch trend."}] },
-  { name:"Speaker - Charging Forward (EVs & V2G)", type:"Speaker Series", date:"Jun 2026", month:"2026-06", registrations:139, attended:66, attendance_rate:47.5, avg_rating:5.0, catalyst_yes:32, catalyst_rate:23.0, catalyst_wording:"Catalyst", first_timers:107, returning_2_4:28, returning_5plus:4, attribution:{"Climate Week":44,"Direct referral":16,"Luma organic":10,"Slack/Community":9,"LinkedIn":8,"Newsletter/CTVC":5,"Women in Product":5}, top_roles:[["pm",21],["consultant",18],["product manager",3],["design",2],["student",2]], signals:[{type:"positive",text:"Registrations 139  -  largest Speaker Series ever, up 72% vs Mar 2026 (81)."},{type:"positive",text:"Catalyst intent 23.0%  -  best ever for Speaker Series, up from 16%."},{type:"positive",text:"Climate Week drove 32% of regs  -  Toronto Climate Week a strong new partnership channel."},{type:"watch",text:"Attendance 47.5%  -  in watch range. Highest raw attended count (66) for Speaker Series yet."}] },
-  { name:"SGN - Q3 2026 (Climate Conscious Tech People)", type:"Small Group Networking", date:"Jul 2026", month:"2026-07", registrations:113, attended:50, attendance_rate:44.2, avg_rating:4.3, catalyst_yes:39, catalyst_rate:34.5, catalyst_wording:"Catalyst", first_timers:91, returning_2_4:18, returning_5plus:4, attribution:{"Other":42,"Climate Week":19,"Luma organic":18,"Direct referral":15,"LinkedIn":6,"Slack/Community":4,"Partner orgs":3,"Newsletter/CTVC":2,"Terra.do":1}, top_roles:[["pm",19],["consultant",9],["student",5],["dev",4],["analyst",3],["ceo",3]], signals:[{type:"positive",text:"Registrations 113  -  up 7.6% vs Apr 2026 SGN (105). Sustained growth."},{type:"positive",text:"Catalyst intent 34.5%  -  well above 25% SGN baseline; strongest reliable-wording SGN yet. Plus 5 existing Catalyst members re-registered."},{type:"watch",text:"Attendance 44.2%  -  in watch range (&lt;50%). Consistent with SGN scaling pattern."},{type:"watch",text:"Climate Week (PNW/PwC) drove 17% of attributed regs  -  partner channel dependency continues."}] },
-  { name:"Snackable - Using AI Sustainably", type:"Snackable Skills", date:"Aug 2026", month:"2026-08", registrations:82, attended:42, attendance_rate:51.2, avg_rating:4.3, catalyst_yes:13, catalyst_rate:15.9, catalyst_wording:"Catalyst", first_timers:43, returning_2_4:23, returning_5plus:5, attribution:{"CCL email/existing":30,"Other":10,"Luma organic":8,"Slack/Community":8,"Newsletter/CTVC":6,"Direct referral":4,"Climate Week":4,"Partner orgs":3,"LinkedIn":3,"Terra.do":2}, top_roles:[["pm",15],["consultant",11],["founder/ceo",9],["dev",8],["design",6],["researcher",5]], signals:[{type:"positive",text:"Registrations 82  -  up 32.3% vs May 2026 Snackable (62). Largest Snackable yet (prev high 78)."},{type:"positive",text:"Attendance 51.2%  -  best Snackable rate yet and first above 50% (May 48.4%, Feb 37.2%)."},{type:"watch",text:"Satisfaction 4.3 (4.29, 7 responses)  -  lowest Snackable score so far; above the 4.0 floor but in the 4.0-4.3 watch band."},{type:"watch",text:"Catalyst intent 15.9% (13 of 82)  -  in the 15-20% watch band. 3 existing Catalyst members also registered."},{type:"watch",text:"Slack/Community rose to 10.3% of attributed regs (8 of 78, from 2 in May)  -  new channel above 10%."}] },
-  { name:"Speaker - Design Essentials", type:"Speaker Series", date:"Sep 2026", month:"2026-09", registrations:80, attended:41, attendance_rate:51.2, avg_rating:4.5, catalyst_yes:10, catalyst_rate:12.5, catalyst_wording:"Catalyst", first_timers:24, returning_2_4:7, returning_5plus:2, attribution:{"CCL email/existing":14,"Luma organic":6,"Newsletter/CTVC":2,"Slack/Community":2,"Other":2,"Terra.do":1,"LinkedIn":1,"Partner orgs":1,"Direct referral":1}, top_roles:[["design",5],["consultant",5],["researcher",4],["sustainability",3],["dev",3],["pm",2]], signals:[{type:"flag",text:"Registrations 80  -  down 42.4% vs Jun 2026 Speaker (139). Jun was boosted by Toronto Climate Week; 80 is in line with Mar 2026 (81)."},{type:"flag",text:"Catalyst intent 12.5% (10 of 80) below 15%. Caveat: 47 registrants were bulk-added without the form, so only 33 saw the question  -  30.3% of those said yes."},{type:"positive",text:"Attendance 51.2%  -  best Speaker Series rate yet (prev high 50.0%, Dec 2025)."},{type:"positive",text:"Satisfaction 4.5 (6 responses)  -  stable vs Speaker benchmark."},{type:"watch",text:"47 of 80 registrants (59%) have no form answers  -  retention, attribution and roles reflect only the 33 who answered."}] },
-  { name:"Workshop - PMEF Masterclass (NYCW)", type:"Workshop", date:"Sep 2026", month:"2026-09", registrations:13, attended:8, attendance_rate:61.5, avg_rating:5.0, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"CCL email/existing":3,"Direct referral":2,"Women in Product":1,"Climate Week":1}, top_roles:[["pm",4],["founder/ceo",3],["consultant",2],["marketing/bizdev",1],["dev",1]], signals:[{type:"positive",text:"Registrations 13  -  up 30% vs Oct 2025 Workshop (10)."},{type:"positive",text:"Attendance 61.5% (8 of 13) and satisfaction 5.0 (2 responses)  -  Workshop stays the quality anchor."},{type:"positive",text:"NYC Climate Week partnership: 3 regs came via the NYCW event guide, plus 1 Women in Product coupon  -  small n, directional only."},{type:"watch",text:"No Catalyst or meetup-history question on this form  -  pipeline and retention buckets not updated from this event."}] },
-  { name:"Workshop - PMEF Masterclass (SDCW Virtual)", type:"Workshop", date:"Oct 2026", month:"2026-10", registrations:12, attended:6, attendance_rate:50.0, avg_rating:null, catalyst_yes:0, catalyst_rate:null, catalyst_wording:null, first_timers:0, returning_2_4:0, returning_5plus:0, attribution:{"Climate Week":3,"Direct referral":3,"CCL email/existing":3}, top_roles:[["founder/ceo",4],["pm",4],["consultant",2],["researcher",1],["job seeker",1]], signals:[{type:"watch",text:"Registrations 12  -  flat vs Sep 2026 Workshop (13, -7.7%)."},{type:"watch",text:"Attendance 50.0% (6 of 12)  -  lowest Workshop rate yet (Sep 2026 61.5%, Oct 2025 80.0%)."},{type:"positive",text:"5 of 12 registrants used Catalyst Member tickets, plus 3 scholarship tickets  -  Workshops are serving members."},{type:"watch",text:"No satisfaction ratings and no Catalyst or meetup-history question  -  satisfaction, pipeline and retention buckets not updated. 10 of 12 had registered for an earlier CCL event."}] },
-  { name:"SGN - Oct 2026 (SDCW)", type:"Small Group Networking", date:"Oct 2026", month:"2026-10", registrations:78, attended:29, attendance_rate:37.2, avg_rating:4.5, catalyst_yes:26, catalyst_rate:33.3, catalyst_wording:"Catalyst", first_timers:62, returning_2_4:13, returning_5plus:3, attribution:{"Climate Week":32,"Other":19,"Luma organic":8,"Direct referral":6,"LinkedIn":5,"CCL email/existing":2,"Partner orgs":2,"Terra.do":1,"Slack/Community":1,"Newsletter/CTVC":1}, top_roles:[["consultant",13],["pm",11],["student/fellow",9],["founder/ceo",6],["design",6],["dev",4]], signals:[{type:"flag",text:"Registrations 78  -  down 31.0% vs Jul 2026 SGN (113). Jul was the SGN record; 78 is in line with the SGN average (75)."},{type:"flag",text:"Attendance 37.2% (29 of 78)  -  below 40% and the lowest SGN rate on record (prev low 42.9%, Apr 2026)."},{type:"positive",text:"Catalyst intent 33.3% (26 of 78)  -  above the 25% SGN baseline, second-best reliable-wording SGN. Plus 5 existing Catalyst members; 15 new unique people added to the pipeline."},{type:"positive",text:"Satisfaction 4.5 (4 responses)  -  stable vs SGN benchmark."},{type:"positive",text:"New-audience reach: 62 of 78 (79.5%) are first-timers; 44 had never registered for a CCL event before."},{type:"watch",text:"Climate Week drove 41.6% of attributed regs (32 of 77)  -  SDCW plus Atlanta, PNW, SF and NYC listings. Partner dependency continues; high first-timer share may explain the low show-up."}] }
+  {"name":"Speaker - PM Guest Talk","type":"Speaker Series","date":"Jun 2025","month":"2025-06","registrations":50,"attended":24,"attendance_rate":48.0,"avg_rating":null,"catalyst_yes":0,"catalyst_rate":null,"first_timers":25,"returning_2_4":0,"returning_5plus":0,"attribution":{},"top_roles":[],"signals":[],"total_invites":159,"rating_responses":0,"returning_unsplit":20,"answered":{"history":45,"hear":25,"role":28,"catalyst":null},"no_form":0,"notes":{"meta":"First tracked event","retention":"Form asked yes/no 'first meetup?': 25 yes, 20 no, 5 blank. Returning attendees not split into 2-4 / 5+.","attribution":"Attribution not computed for this event (25 of 50 answered the how-did-you-hear question).","roles":"Roles not computed for this event (28 of 50 answered the role question).","catalyst":"Not asked - membership question started Nov 2025"}},
+  {"name":"SGN - Jul 2025","type":"Small Group Networking","date":"Jul 2025","month":"2025-07","registrations":49,"attended":25,"attendance_rate":51.0,"avg_rating":4.5,"catalyst_yes":0,"catalyst_rate":null,"first_timers":37,"returning_2_4":0,"returning_5plus":0,"attribution":{"Slack/Community":12,"Other":8,"Terra.do":3,"LinkedIn":2,"Direct referral":1,"Newsletter/CTVC":1,"Climate Week":1},"top_roles":[["pm",13],["consultant",4],["product manager",3],["engineer",1],["founder",1]],"signals":[],"total_invites":202,"rating_responses":2,"returning_unsplit":12,"answered":{"history":49,"hear":30,"role":33,"catalyst":null},"no_form":0,"notes":{"retention":"Form asked yes/no 'first meetup?': 37 yes, 12 no. Returning attendees not split into 2-4 / 5+.","catalyst":"Not asked - membership question started Nov 2025"}},
+  {"name":"Speaker - Designing for Impact","type":"Speaker Series","date":"Aug 2025","month":"2025-08","registrations":77,"attended":37,"attendance_rate":48.1,"avg_rating":4.5,"catalyst_yes":0,"catalyst_rate":null,"first_timers":55,"returning_2_4":0,"returning_5plus":0,"attribution":{"Other":41,"Newsletter/CTVC":14,"Luma organic":8,"Direct referral":5,"Slack/Community":5,"LinkedIn":3,"Terra.do":1},"top_roles":[["pm",12],["consultant",3],["design",2],["student",2]],"signals":[],"total_invites":251,"rating_responses":6,"returning_unsplit":22,"answered":{"history":77,"hear":77,"role":46,"catalyst":null},"no_form":0,"notes":{"retention":"Form asked yes/no 'first meetup?': 55 yes, 22 no. Returning attendees not split into 2-4 / 5+. (The 22 returning were missing from the dashboard until Oct 2026.)","catalyst":"Not asked - membership question started Nov 2025"}},
+  {"name":"SGN - Sep 2025","type":"Small Group Networking","date":"Sep 2025","month":"2025-09","registrations":29,"attended":17,"attendance_rate":58.6,"avg_rating":null,"catalyst_yes":0,"catalyst_rate":null,"first_timers":22,"returning_2_4":0,"returning_5plus":0,"attribution":{"Other":11,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Terra.do":3,"LinkedIn":2,"Newsletter/CTVC":2},"top_roles":[["pm",7],["founder",2],["cpto",1]],"signals":[],"total_invites":29,"rating_responses":0,"answered":{"history":null,"hear":null,"role":null,"catalyst":null},"no_form":null,"notes":{"retention":"No CSV for this event in the project - only the first-timer count was recorded.","catalyst":"Not asked - membership question started Nov 2025","general":["No CSV for this event in the project; figures come from earlier records and are excluded from the deduped pipeline (minor undercount)."]}},
+  {"name":"SGN - Oct 2025 (Virtual/SDCW)","type":"Small Group Networking","date":"Oct 2025","month":"2025-10","registrations":83,"attended":38,"attendance_rate":45.8,"avg_rating":4.0,"catalyst_yes":0,"catalyst_rate":null,"first_timers":58,"returning_2_4":18,"returning_5plus":2,"attribution":{"Other":19,"Climate Week":14,"LinkedIn":4,"Slack/Community":4,"Luma organic":4,"Direct referral":3,"Newsletter/CTVC":3,"Women in Product":1},"top_roles":[["pm",14],["consultant",8],["founder",4],["ceo",2]],"signals":[],"total_invites":316,"rating_responses":2,"answered":{"history":83,"hear":53,"role":61,"catalyst":null},"no_form":0,"notes":{"meta":"San Diego Climate Week virtual session","catalyst":"Not asked - membership question started Nov 2025"}},
+  {"name":"Workshop - Ideate Design Build","type":"Workshop","date":"Oct 2025","month":"2025-10","registrations":10,"attended":8,"attendance_rate":80.0,"avg_rating":5.0,"catalyst_yes":0,"catalyst_rate":null,"first_timers":0,"returning_2_4":0,"returning_5plus":0,"attribution":{"Other":2,"Climate Week":2,"Partner orgs":1,"LinkedIn":1,"Direct referral":1},"top_roles":[["student",2],["educator",1],["founder",1]],"signals":[],"total_invites":10,"rating_responses":1,"dedupe_new":8,"dedupe_earlier":2,"answered":{"history":null,"hear":7,"role":5,"catalyst":null},"no_form":0,"notes":{"retention":"No meetup-history question. Split comes from email dedupe against earlier CCL guest lists (Sep 2025 SGN list unavailable).","catalyst":"Not asked on this form"}},
+  {"name":"Snackable - Sustainable Compute","type":"Snackable Skills","date":"Nov 2025","month":"2025-11","registrations":49,"attended":18,"attendance_rate":36.7,"avg_rating":4.3,"catalyst_yes":9,"catalyst_rate":18.4,"catalyst_wording":"Premium","first_timers":19,"returning_2_4":3,"returning_5plus":2,"attribution":{"Other":23,"Luma organic":7,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":3,"Terra.do":2,"Climate Week":1},"top_roles":[["pm",7],["dev",2],["ceo",2]],"signals":[{"type":"flag","text":"Attendance 36.7% below 40% threshold."},{"type":"positive","text":"Satisfaction 4.3 held despite low attendance  -  content not the issue."}],"total_invites":341,"rating_responses":3,"answered":{"history":24,"hear":46,"role":34,"catalyst":24},"no_form":1,"notes":{"catalyst_extra":"'Premium Membership' wording - softer, not comparable to Feb 2026+","general":["Only 24 of 49 registrants answered the meetup-history and membership questions."]}},
+  {"name":"Speaker - Hollywood Storytelling","type":"Speaker Series","date":"Dec 2025","month":"2025-12","registrations":34,"attended":17,"attendance_rate":50.0,"avg_rating":5.0,"catalyst_yes":14,"catalyst_rate":41.2,"catalyst_wording":"Premium","first_timers":16,"returning_2_4":13,"returning_5plus":2,"attribution":{"Other":11,"Luma organic":5,"LinkedIn":5,"Slack/Community":4,"Direct referral":4,"Climate Week":3},"top_roles":[["pm",10],["consultant",3],["founder",2]],"signals":[{"type":"watch","text":"41.2% used 'Premium Membership' wording  -  not comparable to Feb 2026+ baseline."}],"total_invites":372,"rating_responses":1,"answered":{"history":34,"hear":34,"role":32,"catalyst":26},"no_form":0,"notes":{"catalyst_extra":"'Premium Membership' wording - softer, not comparable to Feb 2026+"}},
+  {"name":"SGN - Jan 2026","type":"Small Group Networking","date":"Jan 2026","month":"2026-01","registrations":71,"attended":35,"attendance_rate":49.3,"avg_rating":5.0,"catalyst_yes":26,"catalyst_rate":36.6,"catalyst_wording":"Premium","first_timers":37,"returning_2_4":22,"returning_5plus":7,"attribution":{"Other":24,"Slack/Community":20,"Luma organic":9,"Terra.do":5,"Direct referral":5},"top_roles":[["pm",14],["consultant",7],["product manager",4],["design",3],["founder",3]],"signals":[{"type":"watch","text":"36.6% used 'Premium Membership' wording  -  treat as directional."}],"total_invites":391,"rating_responses":7,"answered":{"history":66,"hear":70,"role":69,"catalyst":66},"no_form":0,"notes":{"catalyst_extra":"'Premium Membership' wording - softer, not comparable to Feb 2026+"}},
+  {"name":"Snackable - Product Market Earth Fit","type":"Snackable Skills","date":"Feb 2026","month":"2026-02","registrations":78,"attended":29,"attendance_rate":37.2,"avg_rating":5.0,"catalyst_yes":13,"catalyst_rate":16.7,"catalyst_wording":"Catalyst","first_timers":40,"returning_2_4":25,"returning_5plus":7,"attribution":{"Other":27,"Luma organic":13,"Direct referral":10,"LinkedIn":8,"Slack/Community":7,"Terra.do":6,"Newsletter/CTVC":2},"top_roles":[["pm",18],["consultant",9],["ceo",3],["design",3]],"signals":[{"type":"flag","text":"Attendance 37.2% below 40% threshold."}],"total_invites":411,"rating_responses":2,"answered":{"history":72,"hear":78,"role":64,"catalyst":67},"no_form":0,"notes":{"meta":"First event with 'Catalyst Membership' wording (reliable baseline)"}},
+  {"name":"Speaker - Climate Conscious Convos","type":"Speaker Series","date":"Mar 2026","month":"2026-03","registrations":81,"attended":38,"attendance_rate":46.9,"avg_rating":4.7,"catalyst_yes":13,"catalyst_rate":16.0,"catalyst_wording":"Catalyst","first_timers":39,"returning_2_4":28,"returning_5plus":6,"attribution":{"Other":24,"Luma organic":17,"LinkedIn":7,"Direct referral":6,"Newsletter/CTVC":4,"Terra.do":4,"Climate Week":2,"Slack/Community":2},"top_roles":[["pm",11],["consultant",5],["design",4],["product manager",3],["founder",2]],"signals":[],"total_invites":438,"rating_responses":6,"answered":{"history":73,"hear":69,"role":62,"catalyst":59},"no_form":4,"notes":{}},
+  {"name":"SGN - Q2 2026 (Apr)","type":"Small Group Networking","date":"Apr 2026","month":"2026-04","registrations":105,"attended":45,"attendance_rate":42.9,"avg_rating":4.6,"catalyst_yes":26,"catalyst_rate":24.8,"catalyst_wording":"Catalyst","first_timers":77,"returning_2_4":22,"returning_5plus":6,"attribution":{"Climate Week":47,"Other":19,"Luma organic":10,"Women in Product":8,"LinkedIn":6,"Slack/Community":5,"Newsletter/CTVC":5,"Terra.do":4,"Direct referral":3},"top_roles":[["pm",15],["consultant",14],["founder",7],["ceo",3],["design",3]],"signals":[{"type":"watch","text":"Attendance 42.9%  -  watch as registrations scale."},{"type":"positive","text":"Climate Week drove 45% of regs  -  Q3 partner critical."}],"total_invites":499,"rating_responses":9,"answered":{"history":105,"hear":93,"role":102,"catalyst":105},"no_form":0,"notes":{}},
+  {"name":"Snackable - Growth without the Footprint","type":"Snackable Skills","date":"May 2026","month":"2026-05","registrations":62,"attended":30,"attendance_rate":48.4,"avg_rating":5.0,"catalyst_yes":0,"catalyst_rate":null,"catalyst_wording":null,"first_timers":26,"returning_2_4":20,"returning_5plus":6,"attribution":{"Other":21,"CCL email/existing":20,"Climate Week":6,"Newsletter/CTVC":5,"Luma organic":3,"Slack/Community":2,"Direct referral":2,"Terra.do":1,"LinkedIn":1},"top_roles":[["pm",12],["founder/ceo",11],["dev",5],["consultant",5],["design",2]],"signals":[{"type":"positive","text":"Attendance 48.4%  -  best Snackable rate yet, up from 36-37%."},{"type":"watch","text":"No Catalyst question on this form  -  pipeline data unavailable."},{"type":"flag","text":"Registrations -20.5% vs Feb 2026 Snackable (62 vs 78). Watch trend."}],"total_invites":540,"rating_responses":1,"answered":{"history":52,"hear":60,"role":61,"catalyst":null},"no_form":0,"notes":{"catalyst":"Not asked on this form - pipeline not updated from this event"}},
+  {"name":"Speaker - Charging Forward (EVs & V2G)","type":"Speaker Series","date":"Jun 2026","month":"2026-06","registrations":139,"attended":66,"attendance_rate":47.5,"avg_rating":5.0,"catalyst_yes":32,"catalyst_rate":23.0,"catalyst_wording":"Catalyst","first_timers":107,"returning_2_4":28,"returning_5plus":4,"attribution":{"Climate Week":44,"Direct referral":16,"Luma organic":10,"Slack/Community":9,"LinkedIn":8,"Newsletter/CTVC":5,"Women in Product":5},"top_roles":[["pm",21],["consultant",18],["product manager",3],["design",2],["student",2]],"signals":[{"type":"positive","text":"Registrations 139  -  largest Speaker Series ever, up 72% vs Mar 2026 (81)."},{"type":"positive","text":"Catalyst intent 23.0%  -  best ever for Speaker Series, up from 16%."},{"type":"positive","text":"Climate Week drove 32% of regs  -  Toronto Climate Week a strong new partnership channel."},{"type":"watch","text":"Attendance 47.5%  -  in watch range. Highest raw attended count (66) for Speaker Series yet."}],"total_invites":622,"rating_responses":5,"answered":{"history":139,"hear":127,"role":106,"catalyst":139},"no_form":0,"notes":{"meta":"Toronto Climate Week partner listing"}},
+  {"name":"SGN - Q3 2026 (Climate Conscious Tech People)","type":"Small Group Networking","date":"Jul 2026","month":"2026-07","registrations":113,"attended":50,"attendance_rate":44.2,"avg_rating":4.3,"catalyst_yes":39,"catalyst_rate":34.5,"catalyst_wording":"Catalyst","first_timers":91,"returning_2_4":18,"returning_5plus":4,"attribution":{"Other":42,"Climate Week":19,"Luma organic":18,"Direct referral":15,"LinkedIn":6,"Slack/Community":4,"Partner orgs":3,"Newsletter/CTVC":2,"Terra.do":1},"top_roles":[["pm",19],["consultant",9],["student",5],["dev",4],["analyst",3],["ceo",3]],"signals":[{"type":"positive","text":"Registrations 113  -  up 7.6% vs Apr 2026 SGN (105). Sustained growth."},{"type":"positive","text":"Catalyst intent 34.5%  -  well above 25% SGN baseline; strongest reliable-wording SGN yet. Plus 5 existing Catalyst members re-registered."},{"type":"watch","text":"Attendance 44.2%  -  in watch range (&lt;50%). Consistent with SGN scaling pattern."},{"type":"watch","text":"Climate Week (PNW/PwC) drove 17% of attributed regs  -  partner channel dependency continues."}],"total_invites":599,"rating_responses":4,"catalyst_existing_members":5,"answered":{"history":113,"hear":112,"role":113,"catalyst":113},"no_form":0,"notes":{}},
+  {"name":"Snackable - Using AI Sustainably","type":"Snackable Skills","date":"Aug 2026","month":"2026-08","registrations":82,"attended":42,"attendance_rate":51.2,"avg_rating":4.3,"catalyst_yes":13,"catalyst_rate":15.9,"catalyst_wording":"Catalyst","first_timers":43,"returning_2_4":23,"returning_5plus":5,"attribution":{"CCL email/existing":30,"Other":10,"Luma organic":8,"Slack/Community":8,"Newsletter/CTVC":6,"Direct referral":4,"Climate Week":4,"Partner orgs":3,"LinkedIn":3,"Terra.do":2},"top_roles":[["pm",15],["consultant",11],["founder/ceo",9],["dev",8],["design",6],["researcher",5]],"signals":[{"type":"positive","text":"Registrations 82  -  up 32.3% vs May 2026 Snackable (62). Largest Snackable yet (prev high 78)."},{"type":"positive","text":"Attendance 51.2%  -  best Snackable rate yet and first above 50% (May 48.4%, Feb 37.2%)."},{"type":"watch","text":"Satisfaction 4.3 (4.29, 7 responses)  -  lowest Snackable score so far; above the 4.0 floor but in the 4.0-4.3 watch band."},{"type":"watch","text":"Catalyst intent 15.9% (13 of 82)  -  in the 15-20% watch band. 3 existing Catalyst members also registered."},{"type":"watch","text":"Slack/Community rose to 10.3% of attributed regs (8 of 78, from 2 in May)  -  new channel above 10%."}],"total_invites":704,"rating_responses":7,"catalyst_existing_members":3,"answered":{"history":71,"hear":82,"role":80,"catalyst":76},"no_form":0,"notes":{}},
+  {"name":"Speaker - Design Essentials","type":"Speaker Series","date":"Sep 2026","month":"2026-09","registrations":80,"attended":41,"attendance_rate":51.2,"avg_rating":4.5,"catalyst_yes":10,"catalyst_rate":12.5,"catalyst_wording":"Catalyst","first_timers":24,"returning_2_4":7,"returning_5plus":2,"attribution":{"CCL email/existing":14,"Luma organic":6,"Newsletter/CTVC":2,"Slack/Community":2,"Other":2,"Terra.do":1,"LinkedIn":1,"Partner orgs":1,"Direct referral":1},"top_roles":[["design",5],["consultant",5],["researcher",4],["sustainability",3],["dev",3],["pm",2]],"signals":[{"type":"flag","text":"Registrations 80  -  down 42.4% vs Jun 2026 Speaker (139). Jun was boosted by Toronto Climate Week; 80 is in line with Mar 2026 (81)."},{"type":"flag","text":"Catalyst intent 12.5% (10 of 80) below 15%. Caveat: 47 registrants were bulk-added without the form, so only 33 saw the question  -  30.3% of those said yes."},{"type":"positive","text":"Attendance 51.2%  -  best Speaker Series rate yet (prev high 50.0%, Dec 2025)."},{"type":"positive","text":"Satisfaction 4.5 (6 responses)  -  stable vs Speaker benchmark."},{"type":"watch","text":"47 of 80 registrants (59%) have no form answers  -  retention, attribution and roles reflect only the 33 who answered."}],"total_invites":724,"rating_responses":6,"answered":{"history":33,"hear":33,"role":33,"catalyst":33},"no_form":47,"notes":{"catalyst":"10 of 80 \u00b7 30.3% of the 33 who saw the question","general":["47 of 80 registrants (59%) were bulk-added and never saw the form. Retention, attribution, roles and Catalyst reflect only the 33 who answered; Catalyst % still uses all 80 as the denominator."]}},
+  {"name":"Workshop - PMEF Masterclass (NYCW)","type":"Workshop","date":"Sep 2026","month":"2026-09","registrations":13,"attended":8,"attendance_rate":61.5,"avg_rating":5.0,"catalyst_yes":0,"catalyst_rate":null,"catalyst_wording":null,"first_timers":0,"returning_2_4":0,"returning_5plus":0,"attribution":{"CCL email/existing":3,"Direct referral":2,"Women in Product":1,"Climate Week":1},"top_roles":[["pm",4],["founder/ceo",3],["consultant",2],["marketing/bizdev",1],["dev",1]],"signals":[{"type":"positive","text":"Registrations 13  -  up 30% vs Oct 2025 Workshop (10)."},{"type":"positive","text":"Attendance 61.5% (8 of 13) and satisfaction 5.0 (2 responses)  -  Workshop stays the quality anchor."},{"type":"positive","text":"NYC Climate Week partnership: 3 regs came via the NYCW event guide, plus 1 Women in Product coupon  -  small n, directional only."},{"type":"watch","text":"No Catalyst or meetup-history question on this form  -  pipeline and retention buckets not updated from this event."}],"total_invites":511,"rating_responses":2,"dedupe_new":5,"dedupe_earlier":8,"answered":{"history":null,"hear":8,"role":12,"catalyst":null},"no_form":1,"notes":{"meta":"Virtual session at NYC Climate Week","retention":"No meetup-history question. Split comes from email dedupe against all earlier CCL guest lists. Mostly existing community - NYCW added 5 new people.","catalyst":"Not asked on this form"}},
+  {"name":"Workshop - PMEF Masterclass (SDCW Virtual)","type":"Workshop","date":"Oct 2026","month":"2026-10","registrations":12,"attended":6,"attendance_rate":50.0,"avg_rating":null,"catalyst_yes":0,"catalyst_rate":null,"catalyst_wording":null,"first_timers":0,"returning_2_4":0,"returning_5plus":0,"attribution":{"Climate Week":3,"Direct referral":3,"CCL email/existing":3},"top_roles":[["founder/ceo",4],["pm",4],["consultant",2],["researcher",1],["job seeker",1]],"signals":[{"type":"watch","text":"Registrations 12  -  flat vs Sep 2026 Workshop (13, -7.7%)."},{"type":"watch","text":"Attendance 50.0% (6 of 12)  -  lowest Workshop rate yet (Sep 2026 61.5%, Oct 2025 80.0%)."},{"type":"positive","text":"5 of 12 registrants used Catalyst Member tickets, plus 3 scholarship tickets  -  Workshops are serving members."},{"type":"watch","text":"No satisfaction ratings and no Catalyst or meetup-history question  -  satisfaction, pipeline and retention buckets not updated. 10 of 12 had registered for an earlier CCL event."}],"total_invites":741,"rating_responses":0,"catalyst_member_tickets":5,"dedupe_new":2,"dedupe_earlier":10,"answered":{"history":null,"hear":11,"role":12,"catalyst":null},"no_form":0,"notes":{"meta":"San Diego Climate Week virtual session","retention":"No meetup-history question. Split comes from email dedupe against all earlier CCL guest lists.","catalyst":"Not asked \u00b7 5 Catalyst-member tickets"}},
+  {"name":"SGN - Oct 2026 (SDCW)","type":"Small Group Networking","date":"Oct 2026","month":"2026-10","registrations":78,"attended":29,"attendance_rate":37.2,"avg_rating":4.5,"catalyst_yes":26,"catalyst_rate":33.3,"catalyst_wording":"Catalyst","first_timers":62,"returning_2_4":13,"returning_5plus":3,"attribution":{"Climate Week":32,"Other":19,"Luma organic":8,"Direct referral":6,"LinkedIn":5,"CCL email/existing":2,"Partner orgs":2,"Terra.do":1,"Slack/Community":1,"Newsletter/CTVC":1},"top_roles":[["consultant",13],["pm",11],["student/fellow",9],["founder/ceo",6],["design",6],["dev",4]],"signals":[{"type":"flag","text":"Registrations 78  -  down 31.0% vs Jul 2026 SGN (113). Jul was the SGN record; 78 is in line with the SGN average (75)."},{"type":"flag","text":"Attendance 37.2% (29 of 78)  -  below 40% and the lowest SGN rate on record (prev low 42.9%, Apr 2026)."},{"type":"positive","text":"Catalyst intent 33.3% (26 of 78)  -  above the 25% SGN baseline, second-best reliable-wording SGN. Plus 5 existing Catalyst members; 15 new unique people added to the pipeline."},{"type":"positive","text":"Satisfaction 4.5 (4 responses)  -  stable vs SGN benchmark."},{"type":"positive","text":"New-audience reach: 62 of 78 (79.5%) are first-timers; 44 had never registered for a CCL event before."},{"type":"watch","text":"Climate Week drove 41.6% of attributed regs (32 of 77)  -  SDCW plus Atlanta, PNW, SF and NYC listings. Partner dependency continues; high first-timer share may explain the low show-up."}],"total_invites":319,"rating_responses":4,"catalyst_existing_members":5,"dedupe_new":44,"dedupe_earlier":34,"answered":{"history":78,"hear":78,"role":78,"catalyst":78},"no_form":0,"notes":{"meta":"San Diego Climate Week partner session","retention":"Self-reported meetup history. Email dedupe vs all prior CCL guest lists: 44 entirely new to CCL, 34 registered for an earlier event.","attribution":"77 of 78 attributed \u00b7 1 existing Catalyst member excluded \u00b7 Climate Week = SDCW, Atlanta, PNW, SF, NYC listings","roles":"% of 78 registered \u00b7 23 answers outside standard buckets (ops, marketing, GIS, policy, etc.)"}}
 ];
 
 // ===== MONTHLY VIEW =====
+// Mirrors the Latest Event layout for every event in the selected month.
+// All content comes from ALL_EVENTS (numbers + stored notes). ASCII-only: use \u escapes.
+const DOT = ' \u00B7 ';
+const BAR_COLORS = ['var(--accent)','var(--blue)','var(--purple)','var(--orange)','var(--warn)'];
+const ROLE_LABELS = { 'pm':'PM', 'ceo':'CEO', 'cpto':'CPTO', 'founder/ceo':'Founder/CEO', 'dev':'Dev' };
+
+function fmtRole(r) {
+  if (ROLE_LABELS[r]) return ROLE_LABELS[r];
+  return r.split('/').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('/');
+}
+function shortType(t) {
+  return t === 'Small Group Networking' ? 'SGN' : t === 'Speaker Series' ? 'Speaker' : t === 'Snackable Skills' ? 'Snackable' : 'Workshop';
+}
+function typeClass(t) {
+  return t === 'Small Group Networking' ? 'sgn' : t === 'Speaker Series' ? 'speaker' : t === 'Snackable Skills' ? 'snackable' : 'workshop';
+}
+function prevSameType(evt) {
+  const i = ALL_EVENTS.indexOf(evt);
+  for (let j = i - 1; j >= 0; j--) if (ALL_EVENTS[j].type === evt.type) return ALL_EVENTS[j];
+  return null;
+}
+function pct(n, d) { return d ? (n / d * 100) : 0; }
+function kpiCard(cls, label, value, sub, dim) {
+  return `<div class="kpi ${cls}">
+        <div class="kpi-label">${label}</div>
+        <div class="kpi-value"${dim ? ' style="color:var(--text-dim)"' : ''}>${value}</div>
+        <div class="kpi-sub">${sub}</div>
+      </div>`;
+}
+function barList(rows, denom) {
+  const max = Math.max(...rows.map(r => r[1]));
+  return '<div class="bar-list">' + rows.map(([k, v], i) => `<div class="bar-row">
+          <div class="bar-label">${k}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(v / max * 100).toFixed(0)}%;background:${BAR_COLORS[i % 5]}"></div></div>
+          <div class="bar-num">${v}</div>
+          <div class="bar-pct">${pct(v, denom).toFixed(1)}%</div>
+        </div>`).join('') + '</div>';
+}
+function retSeg(color, p, label, n) {
+  return `<div class="ret-seg">
+          <div class="ret-seg-val" style="color:${color}">${p}</div>
+          <div class="ret-seg-label">${label}<br><span class="mono" style="font-size:11px">${n} people</span></div>
+        </div>`;
+}
+function note(text, top) {
+  return text ? `<div class="pipeline-note"${top ? ' style="margin-top:10px"' : ''}>${text}</div>` : '';
+}
+
+function renderEventDetail(evt) {
+  const N = evt.notes || {};
+  const A = evt.answered || {};
+  const reg = evt.registrations;
+  let h = '';
+
+  // --- Header
+  h += `<div class="flex-between" style="margin-bottom:20px">
+    <div>
+      <div class="event-name-big">${evt.name}</div>
+      <div class="event-meta">${shortType(evt.type)}${DOT}${evt.date}${N.meta ? DOT + N.meta : ''}</div>
+    </div>
+    <div class="type-pill ${typeClass(evt.type)}">${shortType(evt.type)}</div>
+  </div>`;
+
+  // --- KPI cards
+  const prev = prevSameType(evt);
+  let regCls = 'blue', regSub = 'First event of this type';
+  if (prev) {
+    const ch = pct(reg - prev.registrations, prev.registrations);
+    regCls = ch > 0 ? 'green' : ch < -30 ? 'red' : 'yellow';
+    regSub = `${ch >= 0 ? '+' : ''}${ch.toFixed(1)}% vs ${prev.date} ${shortType(prev.type)} (${prev.registrations})`;
+  }
+  const ar = evt.attendance_rate;
+  const attCls = ar < 40 ? 'red' : ar < 50 ? 'yellow' : 'green';
+  let satKpi;
+  if (evt.avg_rating === null || evt.avg_rating === undefined) {
+    satKpi = kpiCard('', 'Satisfaction', '\u2014', 'No ratings collected', true);
+  } else {
+    const r = evt.avg_rating;
+    const n = evt.rating_responses;
+    satKpi = kpiCard(r < 4.0 ? 'red' : r < 4.5 ? 'yellow' : 'green', 'Satisfaction', r.toFixed(1),
+      n !== undefined ? `${n} response${n === 1 ? '' : 's'}` : '');
+  }
+  let catKpi;
+  if (evt.catalyst_rate === null || evt.catalyst_rate === undefined) {
+    catKpi = kpiCard('', 'Catalyst Intent', '\u2014', N.catalyst || 'Not asked on this form', true);
+  } else {
+    const c = evt.catalyst_rate;
+    const premium = evt.catalyst_wording === 'Premium';
+    let sub = N.catalyst || `${evt.catalyst_yes} of ${reg}`;
+    if (evt.catalyst_existing_members) sub += `${DOT}+${evt.catalyst_existing_members} existing members`;
+    if (premium) sub += `${DOT}* Premium wording`;
+    catKpi = kpiCard(premium ? 'yellow' : c < 15 ? 'red' : c < 20 ? 'yellow' : 'green', 'Catalyst Intent', c.toFixed(1) + '%' + (premium ? '*' : ''), sub);
+  }
+  h += `<div class="kpi-grid">
+      ${kpiCard(regCls, 'Registrations', reg, regSub)}
+      ${kpiCard(attCls, 'Attendance Rate', ar.toFixed(1) + '%', `${evt.attended} of ${reg} attended`)}
+      ${satKpi}
+      ${catKpi}
+    </div>`;
+  if (N.catalyst_extra) h += `<div class="pipeline-note" style="margin:-8px 0 16px">* ${N.catalyst_extra}</div>`;
+
+  // --- Funnel
+  const inv = evt.total_invites || reg;
+  const hasCat = !(evt.catalyst_rate === null || evt.catalyst_rate === undefined);
+  const fRow = (label, n, w, p, color) => `<div class="funnel-row">
+          <div class="funnel-label">${label}</div>
+          <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${w}%;background:${color}"></div></div>
+          <div class="funnel-num">${n}</div>
+          <div class="funnel-pct">${p}</div>
+        </div>`;
+  let funnel = `<div class="card">
+      <div class="card-title">Registration Funnel</div>
+      <div class="funnel">
+        ${fRow('Invited', inv, 100, '100%', 'var(--border-light)')}
+        ${fRow('Registered', reg, pct(reg, inv).toFixed(1), pct(reg, inv).toFixed(1) + '%', 'var(--blue)')}
+        ${fRow('Attended', evt.attended, pct(evt.attended, inv).toFixed(1), ar.toFixed(1) + '%', 'var(--accent)')}
+        ${hasCat ? fRow('Catalyst Yes', evt.catalyst_yes, pct(evt.catalyst_yes, inv).toFixed(1), evt.catalyst_rate.toFixed(1) + '%', 'var(--purple)')
+                 : fRow('Catalyst Yes', '\u2014', 0, 'n/a', 'var(--purple)')}
+      </div>
+      ${note('Invited = everyone on the Luma guest list \u00B7 Attended and Catalyst % are of registered', true)}
+    </div>`;
+
+  // --- Retention
+  const f = evt.first_timers || 0, r24 = evt.returning_2_4 || 0, r5 = evt.returning_5plus || 0;
+  let ret = '<div class="card"><div class="card-title">Retention Breakdown</div>';
+  if (evt.returning_unsplit !== undefined) {
+    const t = f + evt.returning_unsplit;
+    ret += `<div class="retention-pie" style="margin-bottom:14px">${retSeg('var(--blue)', pct(f, t).toFixed(0) + '%', 'First-timers', f)}${retSeg('var(--accent)', pct(evt.returning_unsplit, t).toFixed(0) + '%', 'Returning (not split)', evt.returning_unsplit)}</div>`;
+    ret += note(N.retention || `% of the ${t} of ${reg} registrants who answered`);
+  } else if (f + r24 + r5 > 0 && r24 + r5 > 0) {
+    const t = f + r24 + r5;
+    ret += `<div class="retention-pie" style="margin-bottom:14px">${retSeg('var(--blue)', pct(f, t).toFixed(0) + '%', 'First-timers', f)}${retSeg('var(--accent)', pct(r24, t).toFixed(0) + '%', 'Returning 2\u20134', r24)}${retSeg('var(--purple)', pct(r5, t).toFixed(0) + '%', 'Loyalists 5+', r5)}</div>`;
+    ret += note(N.retention || `% of the ${t} of ${reg} registrants who answered the meetup-history question`);
+  } else if (evt.dedupe_new !== undefined) {
+    const t = evt.dedupe_new + evt.dedupe_earlier;
+    ret += `<div class="retention-pie" style="margin-bottom:14px">${retSeg('var(--blue)', pct(evt.dedupe_new, t).toFixed(0) + '%', 'New to CCL', evt.dedupe_new)}${retSeg('var(--accent)', pct(evt.dedupe_earlier, t).toFixed(0) + '%', 'Registered for an earlier CCL event', evt.dedupe_earlier)}</div>`;
+    ret += note(N.retention || 'Split from email dedupe against earlier CCL guest lists');
+  } else if (f > 0) {
+    ret += `<div class="retention-pie" style="margin-bottom:14px">${retSeg('var(--blue)', pct(f, reg).toFixed(0) + '%', 'First-timers (of registered)', f)}</div>`;
+    ret += note(N.retention || 'Returning attendees not recorded for this event');
+  } else {
+    ret += note(N.retention || 'No meetup-history question on this form');
+  }
+  ret += '</div>';
+  h += `<div class="two-col">${funnel}${ret}</div>`;
+
+  // --- Attribution + Roles
+  let att = '<div class="card"><div class="card-title">Attribution \u2014 How They Heard About CCL</div>';
+  const attRows = Object.entries(evt.attribution || {}).sort((a, b) => b[1] - a[1]);
+  if (attRows.length) {
+    const t = attRows.reduce((s, r) => s + r[1], 0);
+    att += barList(attRows, t);
+    att += note(N.attribution || `${t} of ${reg} registrants attributed${DOT}returning, N/A and blank answers excluded${DOT}% of attributed`, true);
+  } else {
+    att += note(N.attribution || 'No attribution data for this event');
+  }
+  att += '</div>';
+  let roles = '<div class="card"><div class="card-title">Top Roles</div>';
+  if (evt.top_roles && evt.top_roles.length) {
+    roles += barList(evt.top_roles.map(([k, v]) => [fmtRole(k), v]), reg);
+    roles += note(N.roles || `% of ${reg} registered${A.role !== undefined && A.role !== null ? DOT + A.role + ' answered the role question' : ''}`, true);
+  } else {
+    roles += note(N.roles || 'No role data for this event');
+  }
+  roles += '</div>';
+  h += `<div class="two-col">${att}${roles}</div>`;
+
+  // --- Data notes
+  if (N.general && N.general.length) {
+    h += `<div class="card"><div class="card-title">Data Notes</div><div class="signals">` +
+      N.general.map(t => `<div class="signal watch"><span class="signal-icon">\u2139</span>${t}</div>`).join('') + '</div></div>';
+  }
+
+  // --- Signals
+  if (evt.signals.length > 0) {
+    h += `<div class="card"><div class="card-title">Signals &amp; Flags</div><div class="signals">` +
+      evt.signals.map(s => {
+        const icon = s.type === 'flag' ? '\u{1F6A9}' : s.type === 'watch' ? '\u26A0' : '\u2705';
+        return `<div class="signal ${s.type}"><span class="signal-icon">${icon}</span> ${s.text}</div>`;
+      }).join('') + '</div></div>';
+  }
+  return h;
+}
+
 function renderMonthly() {
   const month = document.getElementById('month-select').value;
   const events = ALL_EVENTS.filter(e => e.month === month);
   const container = document.getElementById('monthly-content');
-
   if (events.length === 0) {
     container.innerHTML = '<div class="card" style="color:var(--text-muted)">No events found for this month.</div>';
     return;
   }
-
-  let html = '';
-  events.forEach(evt => {
-    const typeClass = evt.type === 'Small Group Networking' ? 'sgn' : evt.type === 'Speaker Series' ? 'speaker' : evt.type === 'Snackable Skills' ? 'snackable' : 'workshop';
-    const attColor = evt.attendance_rate >= 60 ? 'var(--accent)' : evt.attendance_rate >= 40 ? 'var(--warn)' : 'var(--flag)';
-    const satColor = evt.avg_rating ? (evt.avg_rating >= 4.5 ? 'var(--accent)' : evt.avg_rating >= 4.0 ? 'var(--warn)' : 'var(--flag)') : 'var(--text-dim)';
-
-    html += `
-    <div class="flex-between" style="margin-bottom:12px">
-      <div>
-        <div class="event-name-big">${evt.name}</div>
-        <div class="event-meta">${evt.date}</div>
-      </div>
-      <span class="type-pill ${typeClass}">${evt.type}</span>
-    </div>
-    <div class="kpi-grid" style="margin-bottom:16px">
-      <div class="kpi blue">
-        <div class="kpi-label">Registrations</div>
-        <div class="kpi-value">${evt.registrations}</div>
-      </div>
-      <div class="kpi" style="--kpi-color:${attColor}">
-        <div class="kpi-label">Attendance Rate</div>
-        <div class="kpi-value" style="color:${attColor}">${evt.attendance_rate.toFixed(1)}%</div>
-        <div class="kpi-sub">${evt.attended} attended</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Satisfaction</div>
-        <div class="kpi-value" style="color:${satColor}">${evt.avg_rating ? evt.avg_rating.toFixed(1) : ' - '}</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Catalyst Intent</div>
-        <div class="kpi-value" style="color:${evt.catalyst_rate ? (evt.catalyst_rate >= 20 ? 'var(--accent)' : 'var(--warn)') : 'var(--text-dim)'}">${evt.catalyst_rate ? evt.catalyst_rate.toFixed(1) + '%' : ' - '}</div>
-        ${evt.catalyst_wording === 'Premium' ? '<div class="kpi-sub" style="color:var(--warn)">* Premium wording</div>' : ''}
-      </div>
-    </div>`;
-
-    if (Object.keys(evt.attribution).length > 0) {
-      const total = Object.values(evt.attribution).reduce((a,b) => a+b, 0);
-      const max = Math.max(...Object.values(evt.attribution));
-      html += `<div class="card" style="margin-bottom:16px">
-        <div class="card-title">Attribution</div>
-        <div class="bar-list">`;
-      Object.entries(evt.attribution).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => {
-        html += `<div class="bar-row">
-          <div class="bar-label">${k}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(0)}%;background:var(--accent)"></div></div>
-          <div class="bar-num">${v}</div>
-          <div class="bar-pct">${(v/total*100).toFixed(1)}%</div>
-        </div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    if (evt.signals.length > 0) {
-      html += `<div class="card" style="margin-bottom:24px">
-        <div class="card-title">Signals</div>
-        <div class="signals">`;
-      evt.signals.forEach(s => {
-        const icon = s.type === 'flag' ? '\u{1F6A9}' : s.type === 'watch' ? '\u26A0' : '\u2705';
-        html += `<div class="signal ${s.type}"><span class="signal-icon">${icon}</span>${s.text}</div>`;
-      });
-      html += `</div></div>`;
-    }
-
-    html += '<hr>';
-  });
-
-  container.innerHTML = html;
+  container.innerHTML = events.map(renderEventDetail).join('<hr style="margin:28px 0">');
 }
 
 // ===== CANVAS CHARTS =====
